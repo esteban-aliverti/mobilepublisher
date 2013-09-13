@@ -25,7 +25,54 @@ var user=require('/modules/user.js');
 var rxtManager = application.get(config.app.RXT_MANAGER);
 var modelManager = application.get(config.app.MODEL_MANAGER);
 var log=new Log();
-
+routeManager.register('GET', 'publisher', '/publisher/api/asdfds', function (context) {	
+	var files = request.getAllFiles();
+	var names = [];
+	for(var name in files) {
+		var file = files[name];
+		var fileName = file.getName();
+		//Assuming that the extension is of 3 letters
+		var fileDistinctName= fileName.substring(0, fileName.length-4);
+		//Initial file saving
+		var fileID=makeid();
+		var path ="/uploads/"+fileID+fileName;
+		file.saveAs(path);
+		log.info(path); 
+		var index = fileName.lastIndexOf('.'); 
+	    var ext = index < fileName.length ? fileName.substring(index + 1) : '';
+	
+	    //Only for IPA files
+		if(ext=="ipa"){
+			//Save the zip file
+			var zipLocation = "/uploads/"+makeid()+fileName;
+			file.saveAs(zipLocation+".zip");
+			//Read the mobileconfig file
+			Packages.java.lang.Thread.sleep(10000);
+			log.info(zipLocation+"/Payload/"+fileDistinctName+".app/embedded.mobileprovision");
+		 			var mobileConfig = new File(zipLocation+"/Payload/"+fileDistinctName+".app/embedded.mobileprovision");
+			mobileConfig.open("r");
+			var text = mobileConfig.readAll();
+			mobileConfig.close();
+			//Find the xml part in the file
+			var begining = text.indexOf('<plist version="1.0">');
+			var end = text.indexOf("</plist>");
+			text = text.substring(begining, end);
+			log.info(text+"</plist>");
+			var data = new XML(text+"</plist>");
+			//log.info(result);
+			var iosManifest = mvc.compileTemplate("/apis/ios_profile.hbs", {url:dataconf.mam.server+fileID+fileName, bundleid: "com.wso2mobile.phonebook.Phonebook", appname:"WSO2Phone App"});
+			var plistName = "/uploads/"+makeid()+file.getName().substr(ext)[0]+".plist";
+			var plist = new File(plistName);
+			plist.open("w");
+			plist.write(iosManifest);
+			plist.close();
+			names.push("/publisher"+plistName);
+			continue;
+		}
+	    names.push("/publisher"+path);
+	}
+	print(names);
+});
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
 
     var shortName = (context.params.type) || '';
@@ -40,9 +87,6 @@ routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', functio
     }
     else {
         var model=modelManager.getModel(shortName);
-        //Obtain the username from the session and populate the provider field
-        var username=session.get('LOGGED_IN_USER');
-        model.set('overview.provider',username);
         var output=model.export('form');
         print(output);
     }
@@ -85,6 +129,8 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 
         var model=modelManager.getModel(shortName);
         model.import('form.importer',context.post);
+
+//		model.put('overview.package',);
 
         //var assetModel = getModel(context.post);
 
