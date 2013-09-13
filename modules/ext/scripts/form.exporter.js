@@ -38,6 +38,7 @@ var module=function(){
 			data['isTextBox']=(fieldTemplate.type=='text')?true:false;
 			data['isTextArea']=(fieldTemplate.type=='text-area')?true:false;
 			data['isOptions']=(fieldTemplate.type=='options')?true:false;
+			data['isFileUpload']=(fieldTemplate.type=='file')?true:false;
 			data['value']=field.value;
 			data['css']=fieldTemplate.meta.css;
 			data['valueList']=csvToArray(fieldTemplate.value||'');
