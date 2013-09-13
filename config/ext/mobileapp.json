@@ -63,7 +63,22 @@
 	    "table":"*",
 	    "label":"Life Cycle",
         "value":"SampleLifeCycle2"
+	},
+	{
+		"name":"banner",
+		"table":"images",
+		"type":"file"
+	},
+	{
+		"name":"icon",
+		"table":"images",
+		"type":"file"
+	},
+	{
+		"name":"screenshots",
+		"table":"images",
+		"type":"file"
 	}
-
+	
     ]
 }
