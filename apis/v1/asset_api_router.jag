@@ -14,6 +14,7 @@
 
 
 var config = require('/config/publisher.json');
+var mam_config = require('/config/mam_config.json');
 var caramel = require('caramel');
 
 var router = require('/modules/router-g.js').router();
@@ -25,53 +26,75 @@ var user=require('/modules/user.js');
 var rxtManager = application.get(config.app.RXT_MANAGER);
 var modelManager = application.get(config.app.MODEL_MANAGER);
 var log=new Log();
-routeManager.register('GET', 'publisher', '/publisher/api/asdfds', function (context) {	
-	var files = request.getAllFiles();
-	var names = [];
-	for(var name in files) {
-		var file = files[name];
-		var fileName = file.getName();
-		//Assuming that the extension is of 3 letters
-		var fileDistinctName= fileName.substring(0, fileName.length-4);
-		//Initial file saving
-		var fileID=makeid();
-		var path ="/uploads/"+fileID+fileName;
-		file.saveAs(path);
-		log.info(path); 
-		var index = fileName.lastIndexOf('.'); 
-	    var ext = index < fileName.length ? fileName.substring(index + 1) : '';
-	
-	    //Only for IPA files
-		if(ext=="ipa"){
-			//Save the zip file
-			var zipLocation = "/uploads/"+makeid()+fileName;
-			file.saveAs(zipLocation+".zip");
-			//Read the mobileconfig file
-			Packages.java.lang.Thread.sleep(10000);
-			log.info(zipLocation+"/Payload/"+fileDistinctName+".app/embedded.mobileprovision");
-		 			var mobileConfig = new File(zipLocation+"/Payload/"+fileDistinctName+".app/embedded.mobileprovision");
-			mobileConfig.open("r");
-			var text = mobileConfig.readAll();
-			mobileConfig.close();
-			//Find the xml part in the file
-			var begining = text.indexOf('<plist version="1.0">');
-			var end = text.indexOf("</plist>");
-			text = text.substring(begining, end);
-			log.info(text+"</plist>");
-			var data = new XML(text+"</plist>");
-			//log.info(result);
-			var iosManifest = mvc.compileTemplate("/apis/ios_profile.hbs", {url:dataconf.mam.server+fileID+fileName, bundleid: "com.wso2mobile.phonebook.Phonebook", appname:"WSO2Phone App"});
-			var plistName = "/uploads/"+makeid()+file.getName().substr(ext)[0]+".plist";
-			var plist = new File(plistName);
-			plist.open("w");
-			plist.write(iosManifest);
-			plist.close();
-			names.push("/publisher"+plistName);
-			continue;
+
+var makeid= function()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+var getExtension = function(file){
+	var path = file.getName();
+	var index = path.lastIndexOf('.');
+    var ext = index < path.length ? path.substring(index + 1) : '';
+	return ext;
+}
+var getFileOnly = function(file){
+	var path = file.getName();
+	var index = path.lastIndexOf('.');
+    var name = index < path.length ? path.substring(0,index) : '';
+	return name;
+}
+var saveFile = function(file){
+	if(file!=undefined){
+		var file_n= file.getName()
+		if(file_n==""){
+			return "";
 		}
-	    names.push("/publisher"+path);
+		var uid= makeid();
+		var file_name = mam_config.filePreciseLocation+uid+file_n;
+		file.saveAs(file_name);
+		return file_name;
 	}
-	print(names);
+	return "";
+}
+/*
+Returing JSON - 
+	{
+		'path': 'path',
+		
+	}
+*/
+routeManager.register('GET', 'publisher', '/publisher/api/mobileapp/upload', function (context) {	
+	var files = request.getAllFiles()[0];
+	var meta = {};
+	if(file==undefined){
+		//return error
+		response.sendError(500);
+		return;
+	}
+	meta.path = saveFile(file);
+	var ext = getExtension(file);
+	log.info(ext);
+	if(ext=="ipa"){
+		var zipFileReading = new Packages.com.dchan.research.zipfile.ZipFileReading();
+		var path = process.getEnv("PWD")+"/repository/deployment/server/jaggeryapps"+meta.path;
+		var d = zipFileReading.readiOSManifestFile(path, getFileOnly(file));
+		log.info(d);
+		var information = JSON.parse(d);
+		mergeRecursive(meta,information);
+	}else if(ext=="apk"){
+		var d = zipFileReading.readAndroidManifestFile(path);
+		log.info(d);
+		var information = JSON.parse(d);
+		mergeRecursive(meta,information);
+	}
+	log.info(meta);
+	print(meta);
 });
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
 
@@ -126,11 +149,37 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 
     //Check if the type is valid
     try {
-
         var model=modelManager.getModel(shortName);
         model.import('form.importer',context.post);
 
-//		model.put('overview.package',);
+		if(shortName =="mobileapp"){
+			var files = request.getAllFiles();
+
+			var banner = files['bannerFile'];
+		 	banner = saveFile(banner);
+
+			var icon = files['iconFile'];
+			icon = saveFile(icon);
+
+			var screenshot1 = files['screenshot1File'];
+			screenshot1 = saveFile(screenshot1);
+
+			var screenshot2 = files['screenshot2File'];
+			screenshot2 = saveFile(screenshot2);
+
+			var screenshot3 = files['screenshot3File'];
+			screenshot3 = saveFile(screenshot3);
+			
+			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
+			
+			var meta = request.getContent()['meta'];
+			model.put('overview.bundleVersion',ctx.appmeta.version);
+			model.put('overview.packageName',ctx.appmeta.package);
+			model.put('overview.url',ctx.appmeta.path);
+			model.put('images.icon',icon);
+			model.put('images.banner',banner);
+			model.put('images.screenshots',screenshots);
+		}
 
         //var assetModel = getModel(context.post);
 
