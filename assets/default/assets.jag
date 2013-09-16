@@ -14,11 +14,12 @@ var router = require('/modules/router-g.js').router();
 var config = require('/config/publisher.json');
 var caramel = require('caramel');
 var user = require('/modules/user.js');
+var publisher = require('/modules/publisher.js').publisher(request, session);
 
 var routeMnger = new router.Router();
 //var routeManager=application.get(config.app.ROUTE_MANAGER);
-var rxtManager = application.get(config.app.RXT_MANAGER);
-var modelManager = application.get(config.app.MODEL_MANAGER);
+var rxtManager = publisher.rxtManager;
+var modelManager = publisher.modelManager;
 var DEFAULT_PAGE = 10;
 
 /*routeMnger.register('GET','publisher','/publisher/assets/list',function(context){
@@ -47,7 +48,7 @@ routeMnger.register('GET', 'publisher', '/publisher/assets/{type}/', function (c
 
         caramel.render({
             op: 'list',
-            cuser: user.current(),
+            cuser: user.current(session),
             shortName: context.params.type,
             artifacts: artifacts
         });
@@ -67,7 +68,7 @@ routeMnger.register('GET', 'publisher', '/publisher/assets/{operation}/{type}/',
         try {
             caramel.render({
                 op: operation,
-                cuser: user.current(),
+                cuser: user.current(session),
                 shortName: type
             });
 
