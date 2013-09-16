@@ -163,6 +163,7 @@ var extension_domain=function(){
      * The function sets the value of a field
      */
     DataModel.prototype.setField=function(name,value){
+	log.info('>>>>set field '+name+" _ "+ typeof value);
         // Find the table name
         var nameComponents=name.split('.');
         var tableName=nameComponents[0];
@@ -177,6 +178,7 @@ var extension_domain=function(){
         
         //If the table does not exist create a new one
         if(!table){
+log.info('creating a new table for '+tableName);
         	table=new DataTable({name:tableName});
         	this.dataTables.push(table);
         } 

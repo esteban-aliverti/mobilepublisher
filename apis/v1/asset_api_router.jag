@@ -26,7 +26,6 @@ var user=require('/modules/user.js');
 var rxtManager = application.get(config.app.RXT_MANAGER);
 var modelManager = application.get(config.app.MODEL_MANAGER);
 var log=new Log();
-
 var makeid= function()
 {
     var text = "";
@@ -69,35 +68,9 @@ Returing JSON -
 		
 	}
 */
-routeManager.register('GET', 'publisher', '/publisher/api/mobileapp/upload', function (context) {	
-	var files = request.getAllFiles()[0];
-	var meta = {};
-	if(file==undefined){
-		//return error
-		response.sendError(500);
-		return;
-	}
-	meta.path = saveFile(file);
-	var ext = getExtension(file);
-	log.info(ext);
-	if(ext=="ipa"){
-		var zipFileReading = new Packages.com.dchan.research.zipfile.ZipFileReading();
-		var path = process.getEnv("PWD")+"/repository/deployment/server/jaggeryapps"+meta.path;
-		var d = zipFileReading.readiOSManifestFile(path, getFileOnly(file));
-		log.info(d);
-		var information = JSON.parse(d);
-		mergeRecursive(meta,information);
-	}else if(ext=="apk"){
-		var d = zipFileReading.readAndroidManifestFile(path);
-		log.info(d);
-		var information = JSON.parse(d);
-		mergeRecursive(meta,information);
-	}
-	log.info(meta);
-	print(meta);
-});
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
-
+	log.info("sdfsdf");
+	
     var shortName = (context.params.type) || '';
 
     var rxtTemplate = rxtManager.findAssetTemplate(function (template) {
@@ -146,13 +119,15 @@ routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}/{id}', fu
 routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', function (context) {
     var shortName = context.params.type;
     var artifactManager = rxtManager.getArtifactManager(shortName);
-
     //Check if the type is valid
     try {
         var model=modelManager.getModel(shortName);
-        model.import('form.importer',context.post);
-
+        if(shortName !="mobileapp"){
+			model.import('form.importer',context.post);
+		}
+		
 		if(shortName =="mobileapp"){
+			var ctx = context.post;
 			var files = request.getAllFiles();
 
 			var banner = files['bannerFile'];
@@ -171,18 +146,24 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			screenshot3 = saveFile(screenshot3);
 			
 			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
+			var meta = ctx['appmeta'];
+			meta = parse(unescape(meta));
+			model.set('overview.bundleVersion',meta.version);
+			model.set('overview.packageName',meta.package);
+			model.set('overview.url',meta.path);
+			model.set('overview.name',ctx.name);
+			model.set('overview.platform',ctx.platform );
+			model.set('overview.version',ctx.version);
+			model.set('overview.provider',ctx.provider);
+			model.set('overview.description',ctx.description);
+			model.set('overview.type',ctx.markettype);
+			model.set('overview.recentChanges',ctx.recentChanges);
+			model.set('images.icon',icon);
+			model.set('images.banner',banner);
+			model.set('images.screenshots',screenshots);
 			
-			var meta = request.getContent()['meta'];
-			model.put('overview.bundleVersion',ctx.appmeta.version);
-			model.put('overview.packageName',ctx.appmeta.package);
-			model.put('overview.url',ctx.appmeta.path);
-			model.put('images.icon',icon);
-			model.put('images.banner',banner);
-			model.put('images.screenshots',screenshots);
 		}
-
         //var assetModel = getModel(context.post);
-
         model.save();
 
         //var createdAsset = artifactManager.add(assetModel);
@@ -194,13 +175,14 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
             print({ok: 'true', message: 'Asset created.', id:idField.value});
         }
         else{
-            log.debug('An asset of type: '+shortNa,e+' could not be created.Probably a fault with publisher logic!');
+            log.debug('An asset of type: '+shortName+' could not be created.Probably a fault with publisher logic!');
         }
 
     }
     catch (e) {
-        log.debug('An asset of type: '+shortNa,e+' could not be created.The following exception was thrown: '+e);
-        response.sendError(500, 'An asset of type: '+shortNa,e+' could not be created.Please check the server logs.');
+		log.info(e);
+        log.debug('An asset of type: '+shortName+' could not be created.The following exception was thrown: '+e);
+        response.sendError(500, 'An asset of type: '+shortName+' could not be created.Please check the server logs.');
     }
 
 });

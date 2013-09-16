@@ -52,7 +52,7 @@ var module=function(){
 
 
             var artifactManager=rxtManager.getArtifactManager(shortName);
-
+			log.info("++++");
             artifactManager.add(asset);
 
             //name='test-gadget-7';
