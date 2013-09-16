@@ -26,7 +26,7 @@ $('#txtMarket').on("change",function() {
 });
 
 
-$('#btn-create-asset').click(function(e) {
+$('#btn-create-asset-mobile').click(function(e) {
 	
 	var name = $("#txtName").val();
 	var description = $("#txtDescription").val();
@@ -59,7 +59,7 @@ $('#btn-create-asset').click(function(e) {
 	
 	$.ajax({
       type: "POST",
-      url: "/publisher/api/apps",
+      url: "/publisher/api/mobileapp",
       contentType: "application/json",
       data: JSON.stringify(params),
       success: function () {
