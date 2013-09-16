@@ -59,7 +59,7 @@ $('#btn-create-asset-mobile').click(function(e) {
 	
 	$.ajax({
       type: "POST",
-      url: "/publisher/api/mobileapp",
+      url: "/publisher/api/asset/mobileapp",
       contentType: "application/json",
       data: JSON.stringify(params),
       success: function () {
