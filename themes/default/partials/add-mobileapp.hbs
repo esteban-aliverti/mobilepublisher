@@ -40,7 +40,7 @@
 <div class="content-div">
 
 	<div class="row-fluid">
-		<form class="form-horizontal" id='form-asset-create'>
+		<form class="form-horizontal" id='form-asset-create' action="/publisher/api/asset/mobileapp" method="post" enctype="multipart/form-data">
 			<div class="well-small offset9">
 				<a class="btn btn-primary" href="#modal-upload" data-toggle="modal">Upload Application</a>
 			</div>
@@ -232,7 +232,7 @@
 
 			
 			<div id="saveButtons" class="form-actions">
-				<input type="button" value="Create" class="btn btn-primary" name="addNewAssetButton" id="btn-create-asset-mobile">
+				<input type="submit" value="Create" class="btn btn-primary" name="addNewAssetButton" id="btn-create-asset-mobileapp">
 				<input type="hidden" value="{{shortName}}" name="{{shortName}}" id="meta-asset-type">
 				<input type="reset" value="Cancel" class="btn">
 			</div>
