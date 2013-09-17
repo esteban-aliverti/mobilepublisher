@@ -173,7 +173,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
         if(idField){
             print({ok: 'true', message: 'Asset created.', id:idField.value});
 			if(shortName =="mobileapp"){
-				response.sendRedirect("publisher/assets/mobileapp/");
+				response.sendRedirect("/publisher/assets/mobileapp/");
 			}
         }
         else{
