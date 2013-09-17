@@ -52,7 +52,7 @@ var saveFile = function(file){
 		var uid= makeid();
 		var file_name = mam_config.filePreciseLocation+uid+file_n;
 		file.saveAs(file_name);
-		return file_name;
+		return "/publisher"+file_name;
 	}
 	return "";
 }
