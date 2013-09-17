@@ -156,7 +156,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			model.set('overview.description',ctx.description);
 			model.set('overview.type',ctx.markettype);
 			model.set('overview.recentChanges',ctx.recentChanges);
-			model.set('images.icon',icon);
+			model.set('images.thumbnail',icon);
 			model.set('images.banner',banner);
 			model.set('images.screenshots',screenshots);
 			
