@@ -19,11 +19,6 @@ var generateBreadcrumbJson = function(data) {
                 assetType : "Site",
                 url : "/publisher/assets/site/",
                 assetIcon : "icon-compass" //font-awesome icon class
-            },
-			{
-                assetType : "Mobile App",
-                url : "/publisher/assets/mobileapp/",
-                assetIcon : "icon-app" //font-awesome icon class
             }
         ]
     };
@@ -32,6 +27,7 @@ var generateBreadcrumbJson = function(data) {
             currentType : data.shortName,
             assetName : data.artifact.attributes.overview_name,
             currentVersion : data.artifact.attributes.overview_version,
+            versions:data.versions,
             breadcrumb :
                 [
                     {

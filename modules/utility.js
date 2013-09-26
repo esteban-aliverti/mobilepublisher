@@ -4,7 +4,7 @@
  Created Date: 28/7/2013
  */
 var rxt_utility = function () {
-
+     var log=new Log();
     /*
      The method is used to create a JSON object using
      an xml object.
@@ -110,6 +110,87 @@ var rxt_utility = function () {
         }
     }
 
+    /*
+    The function checks if a and b are equal for the property key.
+    If a is an array then b's key is checked against the array to see if there is a match
+    @a: The object to match against
+    @b: The target of the check
+    @return: True if a and b are equal
+     */
+    function checkEquality(a,b,key){
+        if(a[key] instanceof  Array){
+
+            return (a[key].indexOf(b[key])!=-1)?true:false;
+        }
+        else{
+            return a[key]==b[key];
+        }
+    }
+
+    /*
+     The function asserts whether the two provided objects are equal.
+     @target: The target to be checked
+     @predicateObj: An object containing properties to be checked
+     @return: True if the target values match the predicate object
+     */
+    function assert(target,predicateObj){
+
+        //The function counts the number of properties in an object
+        function countProps(obj){
+            var count=0;
+            for(var index in obj){
+                count++;
+            }
+            return count;
+        }
+
+
+        //The function recursively matches properties between the two
+        //objects
+        function recursiveInspect(target,obj,isEqual){
+
+            //Check if the object is empty
+            if(countProps(obj)==0){
+                //log.info('empty object');
+                return true;
+            }
+            else{
+
+                //Go through each property
+                for(var key in obj){
+
+                    //Check if the target's property is a predicate
+                    if(target.hasOwnProperty(key)){
+
+                        //Check if it is an object
+                        if(countProps(target[key])>0){
+
+                            isEqual=recursiveInspect(target[key],obj[key]);
+                        }
+                        else{
+                            //isEqual=(obj[key]==target[key]);
+                            isEqual=checkEquality(obj,target,key);
+                        }
+                    }
+                    else{
+
+                        //If the target does not have the property then it cannot be equal
+                        return false;
+                    }
+
+                    //Check if the object is not equal
+                    if(!isEqual){
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        return recursiveInspect(target,predicateObj,true);
+    }
+
     return{
         /*The function takes a set of options
          and configures a target object
@@ -210,6 +291,95 @@ var rxt_utility = function () {
         },
 
         /*
+        The function checks whether two objects are equal
+        @objectA: The target to be matched
+        @equalizer:[OPTIONAL] Performs some value conversion on the object B value before comparison
+        @return: True if the objects are similar,else false
+         */
+        isEqual:function(objectA,objectB,ignoredProperties,equalizer){
+
+            //If ignored properties are not provided
+            ignoredProperties=ignoredProperties||[];
+
+            equalizer=equalizer||function(value){return value;};
+
+            //There is no match
+            var match=true;
+
+            //Go through each property in object A.
+            for(var propertyA in objectA){
+
+                //Check if object B has the property A.
+                if((objectB.hasOwnProperty(propertyA))&&(ignoredProperties.indexOf(propertyA)==-1)) {
+
+                    //Check if the user has provided a list of criteria to search for
+                    var isArray=objectA[propertyA] instanceof Array;
+
+                    //Check if any of the array contents are present in object B
+                    if(isArray){
+                        match=(objectA[propertyA].indexOf(equalizer(objectB[propertyA]))!=-1);
+                    }
+                    else{
+                        match=objectA[propertyA]==equalizer(objectB[propertyA]);
+                    }
+
+                    if(!match){
+                        return match;
+                    }
+                }
+            }
+
+            return match;
+        },
+        /*
+        The function checks for the presence of an object matching the predicate
+        @array: An array of objects
+        @predicate: A predicate condition
+         */
+        findInArray:function(array,predicate){
+            var tool;
+
+            for(var index in array){
+                if(assert(array[index],predicate)){
+                    return array[index];
+                }
+            }
+
+            return null;
+        },
+        /*
+        The function asserts whether the two provided objects are equal.
+        @target: The target to be checked
+        @predicateObj: An object containing properties to be checked
+        @return: True if the target values match the predicate object
+         */
+        assertEqual:function(target,predicateObj){
+            return assert(target,predicateObj);
+        },
+        /*
+        The function clones the provided object to a new one while
+        optionally ignoring the provided properties
+        @object:The object to be cloned
+        @ignoredProperties: The properties to be ignored
+         */
+        cloneObject:function(object,ignoredProperties){
+
+            var ignore=ignoredProperties||[];
+
+            var cloned={};
+            //Go through each property
+            for(var index in object){
+                //Do not clone ignored properties
+                if(ignore.indexOf(index)==-1){
+                    cloned[index]=object[index];
+                }
+            }
+
+            return cloned;
+
+        },
+
+        /*
          The function converts an array into a csv list
          @array: An array of values
          @returns: A CSV string of the array
@@ -277,6 +447,54 @@ var rxt_utility = function () {
                 }
 
                 return files;
+            },
+            /*
+            The function checks whether the provided file instance indicates a temporary file
+            @file: A file instance
+            @return: True if the provided file instance is of a temporary file
+             */
+            isTempFile:function(file){
+                return (file.getName().indexOf('~')!=-1);
+            },
+            /*
+            The function returns the extension of a file.
+            @file: A file from which the extension must be extracted
+            @return: The file extension as a string
+             */
+            getExtension:function(file){
+               var components=file.getName().split('.');
+
+               if(components.length<1){
+                   return '';
+               }
+
+               return components[components.length-1];
+            },
+            /*
+            The function returns all of the directories in a given path
+            @path: The base path which must be inspected.
+            @return: An array containing all directories in the provided path
+             */
+            getDir:function(path){
+
+                var file=new File(path);
+                var resources=file.listFiles();
+                var resource;
+                var directories=[];
+
+                //Go through all resources
+                for(var index in resources){
+
+                    //Get the current resource
+                    resource=resources[index];
+
+                    //Check if the resource is a directory
+                    if(resource.isDirectory()){
+                        directories.push(resource);
+                    }
+                }
+
+                return directories;
             }
         },
 

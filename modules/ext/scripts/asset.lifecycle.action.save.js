@@ -22,14 +22,14 @@ var module=function(){
 	return{
 		execute:function(context){
 
-           log.info('Entered : '+meta.name);
+           log.debug('Entered : '+meta.name);
 
            var model=context.model;
            var template=context.template;
            var type=template.shortName;
 
            log.info('Entered '+meta.name);
-           log.info(stringify(context.actionMap));
+           log.debug(stringify(context.actionMap));
 
            //Get the id of the model
            var id=model.getField('*.id').value;
@@ -47,7 +47,7 @@ var module=function(){
 
            artifactManager.attachLifecycle(lifeCycle,asset);
 
-           log.info('Finished attaching the lifecycle to the asset'+stringify(asset));
+           log.debug('Finished attaching the lifecycle to the asset'+stringify(asset));
 
            log.debug('Check if there is an action to be performed when attaching a life-cycle');
 
