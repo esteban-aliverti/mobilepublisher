@@ -11,6 +11,13 @@ var render=function(theme,data,meta,require){
 	switch(data.op){
 	case 'create':
 		listPartial='add-asset';
+		
+		if(data.data.meta.shortName=='mobileapp'){
+			log.info('Special rendering case for mobileapp-using add-mobilepp.hbs');
+			listPartial='add-mobileapp';
+		}
+		
+		
 		break;
 	case 'view':
 		listPartial='view-asset';
