@@ -1,2 +1,7 @@
 #Ignore temporary files
 *~
+<<<<<<< HEAD
+=======
+/.project
+upload
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b

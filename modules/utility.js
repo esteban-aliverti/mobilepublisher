@@ -182,6 +182,23 @@ var rxt_utility = function () {
         },
 
         /*
+<<<<<<< HEAD
+=======
+        The function executes the logic if a particular key is present
+        in an object
+        @object: The object to be checked
+        @key: The property to be checked
+        @logic:The logic to be executed
+         */
+        isPresent:function(object,key,logic){
+            //Check if the object has a property called key
+            if(object.hasOwnProperty(key)){
+                logic(object[key]);
+            }
+        },
+
+        /*
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
          The function copies the properties defined in the array from object A to B
          @objectA: The object to be targeted
          @objectB: The object which will recieve the values of A

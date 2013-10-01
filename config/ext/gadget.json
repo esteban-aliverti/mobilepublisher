@@ -15,7 +15,10 @@
         "overview.provider:order=2",
         "overview.description:order=3",
         "overview.version:order=4",
+<<<<<<< HEAD
         "overview.status:save=disabled",
+=======
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
         "overview.version:save=disabled"
     ],
 
@@ -27,7 +30,11 @@
 
         {
             "name": "*"
+<<<<<<< HEAD
         },
+=======
+        }
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
 
     ],
 
@@ -52,6 +59,7 @@
             "field": "overview.*",
             "name": "save",
             "value": "default"
+<<<<<<< HEAD
         },
         {
             "field": "images.*",
@@ -69,6 +77,25 @@
             "value": "default"
         },
         {
+=======
+        },
+        {
+            "field": "images.*",
+            "name": "save",
+            "value": "default"
+        },
+        {
+            "field": "*.lifeCycle",
+            "name": "save",
+            "value": "asset.lifecycle.action.save"
+        },
+        {
+            "field": "*.lifeCycle",
+            "name": "fetch",
+            "value": "default"
+        },
+        {
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
             "field":"overview.provider",
             "name":"readOnly",
             "value":"true"

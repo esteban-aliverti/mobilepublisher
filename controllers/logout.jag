@@ -1,6 +1,10 @@
 <%
 (function(){
+<<<<<<< HEAD
     var user = session.get("LOGGED_IN_USER");
+=======
+    var user = require('/modules/user.js').current(session).username;//session.get("LOGGED_IN_USER");
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
     if(user === null) {
         response.sendRedirect('/publisher');
     } else {

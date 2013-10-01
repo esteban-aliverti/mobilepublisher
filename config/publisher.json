@@ -7,7 +7,11 @@
         "publisher": {
             "/permission/admin/login": ["ui.execute"]
         },
+<<<<<<< HEAD
         "reviewer":{
+=======
+        "reviewer": {
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
             "/permission/admin/login": ["ui.execute"]
         }
     },
@@ -30,6 +34,7 @@
             "username": "admin",
             "password": "admin"
         },
+<<<<<<< HEAD
         "accessible":[
             {
                 "context":"/_system/governance",
@@ -38,6 +43,16 @@
                            "http://www.wso2.org/projects/registry/actions/add",
                            "http://www.wso2.org/projects/registry/actions/delete",
                            "authorize"]
+=======
+        "accessible": [
+            {
+                "context": "/_system/governance",
+                "collections": ["gadgets", "sites", "ebooks"],
+                "actions": ["http://www.wso2.org/projects/registry/actions/get",
+                    "http://www.wso2.org/projects/registry/actions/add",
+                    "http://www.wso2.org/projects/registry/actions/delete",
+                    "authorize"]
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
             }
         ]
     },
@@ -45,6 +60,15 @@
         "RXT_MANAGER": "rxt_manager",
         "ROUTE_MANAGER": "route_manager",
         "MODEL_MANAGER": "model_manager"
+    },
+    "lifeCycleBehaviour": {
+
+        "SampleLifeCycle2": {
+
+            "onAttach": {
+                "action": "Promote"
+            }
+        }
     },
 
     "paths": {

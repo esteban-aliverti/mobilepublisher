@@ -18,7 +18,9 @@ var module=function(){
 	 * Go through each table and extract field data
 	 */
 	function fillFields(table,fieldArray,template){
-		
+
+        //var username=obtainUserNameFromSession();
+        //log.debug('logged in user: '+username);
 		//Go through each field
 		for each(var field in table.fields){
 			
@@ -38,9 +40,15 @@ var module=function(){
 			data['isTextBox']=(fieldTemplate.type=='text')?true:false;
 			data['isTextArea']=(fieldTemplate.type=='text-area')?true:false;
 			data['isOptions']=(fieldTemplate.type=='options')?true:false;
+<<<<<<< HEAD
 			data['isFileUpload']=(fieldTemplate.type=='file')?true:false;
+=======
+
+            data['isReadOnly']=(fieldTemplate.meta.readOnly)?fieldTemplate.meta.readOnly:false;
+
+>>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
 			data['value']=field.value;
-			data['css']=fieldTemplate.meta.css;
+			
 			data['valueList']=csvToArray(fieldTemplate.value||'');
 			
 			fieldArray.push(data);
@@ -48,6 +56,21 @@ var module=function(){
 
 		return fieldArray;
 	}
+
+    /*
+    The function obtains the currently logged in user from the session
+     */
+    function obtainUserNameFromSession(){
+
+        var username='unknown';
+        try{
+            username=require('/modules/user.js').current(session).username;//.get('LOGGED_IN_USER');
+        }
+        catch(e){
+            log.debug('Unable to retrieved logged in user from sessions.The following exception was thrown: '+e);
+        }
+        return username;
+    }
 	
 	/*
 	 * Fills all of the tables except the *(global)

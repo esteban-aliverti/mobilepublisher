@@ -6,28 +6,30 @@
                     <li><a target="_self" href="/publisher/assets/gadget/"><i class="icon-dashboard"></i>{{t "Gadget"}}</a></li>
                     <li><a target="_self" href="/publisher/assets/site/"><i class="icon-compass"></i>{{t "Site"}}</a></li>
                     <li><a target="_self" href="/publisher/assets/book/"><i class="icon-book"></i>{{t "Book"}}</a></li>
-					 <li><a target="_self" href="/publisher/assets/mobileapp/"><i class="icon-book"></i>{{t "Mobile App"}}</a></li>
                 </ul>
             </div>-->
     <div class="btn-group context_menu left">
         <a class="btn btn-large dropdown-toggle assetTypeSwitcher" data-toggle="dropdown" href="#">
-            <i class="icon-{{shortName}}"></i>Type : <span class="publisherTitle">{{shortName}}</span>
+            <i class="icon-{{currentType}}"></i>Type : <span class="publisherTitle">{{currentType}}</span>
             <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
+            <!--
             <li><a target="_self" href="/publisher/assets/gadget/"><i class="icon-dashboard"></i>{{t "Gadget"}}</a></li>
             <li><a target="_self" href="/publisher/assets/site/"><i class="icon-compass"></i>{{t "Site"}}</a></li>
-            <li><a target="_self" href="/publisher/assets/ebook/"><i class="icon-book"></i>{{t "EBook"}}</a></li>
-			<li><a target="_self" href="/publisher/assets/mobileapp/"><i class="icon-book"></i>{{t "Mobile App"}}</a></li>
+            <li><a target="_self" href="/publisher/assets/ebook/"><i class="icon-book"></i>{{t "EBook"}}</a></li> -->
+            {{#each breadcrumb}}
+                <li><a target="_self" href="{{this.url}}"><i class="{{this.assetIcon}}"></i>{{this.assetType}}</a></li>
+            {{/each}}
         </ul>
     </div>
-    {{#if this.data}}
+    {{#if assetName}}
          <span class="breadcrumb-separator">/</span>
-         <span class="breadcrumb-text left">{{{snoop "fields(name=overview_name).value" this.data}}}</span>
+         <span class="breadcrumb-text left">{{assetName}}</span>
          <span class="breadcrumb-separator">/</span>
          <div class="btn-group context_menu left">
             <a class="btn btn-large dropdown-toggle assetTypeSwitcher" data-toggle="dropdown" href="#">
-                Version : <span class="publisherTitle">{{{snoop "fields(name=overview_version).value" this.data}}}</span>
+                Version : <span class="publisherTitle">{{currentVersion}}</span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
@@ -37,9 +39,14 @@
             </ul>
          </div>
     {{/if}}
+    {{#if breadCrumbStaticText}}
+         <span class="breadcrumb-separator">/</span>
+         <span class="breadcrumb-text left">{{breadCrumbStaticText}}</span>
+    {{/if}}
 
 </div>
 <div class="span3 pull-right control-search">
 	<input type="text" class="inp-ribbon span12" placeholder="{{t "Search.."}}" id="inp_searchAsset" />
 	<a class="" id="search-button"> <i class="icon-search"></i> </a>
 </div>
+
