@@ -166,7 +166,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			model.set('overview.description',ctx.description);
 			model.set('overview.type',ctx.markettype);
 			model.set('overview.recentChanges',ctx.recentChanges);
-			model.set('images.icon',icon);
+			model.set('images.thumbnail',icon);
 			model.set('images.banner',banner);
 			model.set('images.screenshots',screenshots);
 			
@@ -206,6 +206,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 
     }
     catch (e) {
+		log.info(e);
         log.debug('An asset of type: ' + shortName + ' could not be created.The following exception was thrown: ' + e);
         response.sendError(500, 'An asset of type: ' + shortName + ' could not be created.Please check the server logs.');
     }
