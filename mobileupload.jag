@@ -84,6 +84,7 @@
 			log.debug("Uploaded file is corrupted");
 	        response.sendError(500, 'Application meta data was not found');
 		}
+		log.info("Successfully discovered");
 		print(meta);	
 	}
 }());

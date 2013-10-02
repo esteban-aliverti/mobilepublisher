@@ -22,6 +22,7 @@ var routeManager = new router.Router();
 
 var user=require('/modules/user.js');
 var publisher = require('/modules/publisher.js').publisher(request, session);
+
 var makeid= function()
 {
     var text = "";
@@ -136,8 +137,8 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 		
 		if(shortName =="mobileapp"){
 			var ctx = context.post;
-			var files = request.getAllFiles();
 			log.info(ctx);
+			var files = request.getAllFiles();
 			var banner = files['bannerFile'];
 		 	banner = saveFile(banner);
 
@@ -155,6 +156,12 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			
 			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
 			var meta = ctx['appmeta'];
+			log.info(stringify(meta));
+			if(meta == undefined || meta==""){
+				log.debug("Application meta data was not found");
+		        response.sendError(500, 'Application meta data was not found');
+				return;
+			}
 			meta = parse(unescape(meta));
 			model.set('overview.bundleVersion',meta.version);
 			model.set('overview.packageName',meta.package);
