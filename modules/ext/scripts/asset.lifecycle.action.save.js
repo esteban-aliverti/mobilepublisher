@@ -75,7 +75,12 @@ var module=function(){
                var asset=artifactManager.get(asset.id);
 
                artifactManager.promoteLifecycleState(invokeAction,asset);
-
+			   var state=artifactManager.getLifecycleState(artifact);
+			   if(state=='In-Review'){
+				//Send email to Reviewer 
+			   }else if(state='Published'){
+				//send email to developer
+			   }
                log.debug('Asset has been '+invokeAction+'ed to the next state.');
            }
 
