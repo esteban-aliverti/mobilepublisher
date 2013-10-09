@@ -11,19 +11,24 @@ $('#application-tab a').click(function(e) {
 $('#txtOS').on("change",function() {
 	  if($('#txtOS').val() == 'webapp'){
 		  $('#control-webapp').show();
-		  $('#file-upload-box').css('display', 'none');
+		  $('#app-upload-block').css('display', 'none');
+		  $('#market-type-block').css('display', 'none');
+		  
 	  }else{
 		  $('#control-webapp').hide();
-		   $('#file-upload-box').css('display', 'block');
+		   $('#app-upload-block').css('display', 'block');
+		   $('#market-type-block').css('display', 'block');
 	  }
 });
 
 
 $('#txtMarket').on("change",function() {
 	  if($('#txtMarket').val() == 'Market'){
-		  $('#control-packagename').show();
+		  $('#file-upload-block').css('display', 'none');
+		  $('#package-select-block').css('display', 'block');
 	  }else{
-		  $('#control-packagename').hide();
+		  $('#package-select-block').css('display', 'none');
+		  $('#file-upload-block').css('display', 'block');
 	  }
 });
 
@@ -98,4 +103,14 @@ $(document).ready(function(){
 
 	$("#modal-upload-app").modal('show');
 
+});
+
+
+jQuery("#form-asset-create").submit(function() {
+    if(appMetaData == null){
+    	if($('#txtOS').val()!= "webapp"){
+    		$("#modal-upload-app").modal('show');
+    		return false;
+    	}   	
+    }
 });
