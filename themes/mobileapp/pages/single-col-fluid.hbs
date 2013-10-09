@@ -8,19 +8,35 @@
 	<head>
 		<title>{{include title}}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<link href="{{url "/themes/mobileapp/css/mobileapp/main.css"}}" rel="stylesheet" media="screen">
 		<!-- Bootstrap -->
-		<link href="{{url "/themes/default/css/bootstrap.min.css"}}" rel="stylesheet" media="screen">
-		<link href="{{url "/themes/default/css/bootstrap-responsive.min.css"}}" rel="stylesheet">
+		<link href="{{url "/themes/mobileapp/css/bootstrap.min.css"}}" rel="stylesheet" media="screen">
+		<link href="{{url "/themes/mobileapp/css/bootstrap-responsive.min.css"}}" rel="stylesheet">
 		<!-- fontawesome -->
-		<link rel="stylesheet" href="{{url "/themes/default/css/font-awesome.min.css"}}">
+		<link rel="stylesheet" href="{{url "/themes/mobileapp/css/font-awesome.min.css"}}">
 
 		<!-- Token input -->
-		<link rel="stylesheet" href="{{url "/themes/default/js/token.input/css/token-input-facebook.css"}}">
+		<link rel="stylesheet" href="{{url "/themes/mobileapp/js/token.input/css/token-input-facebook.css"}}">
 
 		<!-- publisher styles -->
-		<link href="{{url "/themes/default/css/es-publisher-commons.css"}}" rel="stylesheet" media="screen">
-		<link href="{{url "/themes/default/css/navigation.css"}}" rel="stylesheet" media="screen">
-		<script src="{{url "/themes/default/js/modernizr.custom.js"}}"></script>
+		<link href="{{url "/themes/mobileapp/css/es-publisher-commons.css"}}" rel="stylesheet" media="screen">
+		<link href="{{url "/themes/mobileapp/css/navigation.css"}}" rel="stylesheet" media="screen">
+		<script src="{{url "/themes/mobileapp/js/modernizr.custom.js"}}"></script>
+		
+		
+		
+		<link href="{{url "/themes/mobileapp/css/mobileapp/bootstrap-fileupload.min.css"}}" rel="stylesheet" media="screen">
+		<link href="{{url "/themes/mobileapp/assets/dropdown/css/msdropdown/dd.css"}}" rel="stylesheet" media="screen">
+		
+		
+		
+		<style>
+			.publisher-breadcrumb{
+				display: none;
+			}
+		</style>
+		
 		{{css}}
 	</head>
 	<body>
@@ -33,10 +49,8 @@
 			</div>
 			<div class="content-area-cont">
 				<div class="row-fluid content-area">
-					<div class="span3 publisher-left">
-						{{include leftnav}}
-					</div>
-					<div class="span9 publisher-right">
+					
+					<div class="span12">
 						{{include listassets}}
 					</div>
 				</div>
@@ -48,10 +62,18 @@
 			</div>
 		</div>
 
-		<script src="{{url "/themes/default/js/jquery-1.10.2.min.js"}}"></script>
-		<script src="{{url "/themes/default/js/bootstrap.min.js"}}"></script>
-		<script src="{{url "/themes/default/js/jquery.dlmenu.js"}}"></script>
-		<script src="{{url "/themes/default/js/publisher.commons.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/jquery-1.10.2.min.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/bootstrap.min.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/jquery.dlmenu.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/publisher.commons.js"}}"></script>
+		
+		
+		
+		<script src="{{url "/themes/mobileapp/js/mobileapp/bootstrap-fileupload.min.js"}}"></script>
+		<script src="{{url "/themes/themes/mobileapp/js/mobileapp/jquery.fileupload.js"}}"></script>
+		
+		
+		
 		<script>
 			$(function() {
 				$('#dl-menu').dlmenu({
@@ -62,11 +84,22 @@
 				});
 			});
 		</script>
-		<script src="{{url "/themes/default/js/raphael-min.js"}}"></script>
-		<script src="{{url "/themes/default/js/graph.js"}}"></script>
-		<script src="{{url "/themes/default/js/token.input/jquery.tokeninput.js"}}"></script>
-		<script src="{{url "/themes/default/js/logic/lifecycle.asset.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/raphael-min.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/graph.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/token.input/jquery.tokeninput.js"}}"></script>
+		<script src="{{url "/themes/mobileapp/js/logic/lifecycle.asset.js"}}"></script>
+		
+		
+		<script src="{{url "/themes/mobileapp/assets/dropdown/js/msdropdown/jquery.dd.min.js"}}"></script>
+		
+		
+		
 		{{js}}
 		{{code}}
+		
+		<script>
+			$(".dropdownimage").msDropDown();		
+		</script>
+		
 	</body>
 </html>
