@@ -11,8 +11,10 @@ $('#application-tab a').click(function(e) {
 $('#txtOS').on("change",function() {
 	  if($('#txtOS').val() == 'webapp'){
 		  $('#control-webapp').show();
+		  $('#file-upload-box').css('display', 'none');
 	  }else{
 		  $('#control-webapp').hide();
+		   $('#file-upload-box').css('display', 'block');
 	  }
 });
 
@@ -69,6 +71,9 @@ $('#btn-create-asset-mobile').click(function(e) {
 });
 
 
+$('#modal-upload-app').on('shown', function() {
+        $(".dropdownimage").msDropDown();
+});
 
 
 
