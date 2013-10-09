@@ -41,13 +41,14 @@ $(function(){
     /*
     Promotes an asset
      */
-    $('#btn-asset-promote').on('click',function(){
+    $('#btn-asset-promote').on('click',function(e){
+    	e.preventDefault();
        console.log('/publisher/api/lifecycle/Promote/'+asset+'/'+id);
         $.ajax({
           url:'/publisher/api/lifecycle/Promote/'+asset+'/'+id,
           type:'PUT',
           success:function(response){
-              alert('Promoted');
+              showAlert('Asset promoted successfully', 'success');
 
 
               $.ajax({
@@ -60,6 +61,7 @@ $(function(){
                       //disableActions(statInfo.actions);
                       buildCheckList(asset,id);
                       buildLCGraph();
+                      buildHistory(asset,id);
                   },
                   error:function(response){
                       $('#state').html('Error obtaining state');
@@ -67,8 +69,7 @@ $(function(){
               });
           },
           error:function(response){
-
-              alert('Not promoted');
+			showAlert('Error occured while promoting', 'error');
           }
         });
     });
@@ -76,13 +77,13 @@ $(function(){
     /*
     Demotes an asset
      */
-    $('#btn-asset-demote').on('click',function(){
+    $('#btn-asset-demote').on('click',function(e){
+    	e.preventDefault();
         $.ajax({
             url:'/publisher/api/lifecycle/Demote/'+asset+'/'+id,
             type:'PUT',
             success:function(response){
-                alert('Demoted');
-
+                showAlert('Asset demoted successfully', 'success');
                 $.ajax({
                     url:'/publisher/api/lifecycle/'+asset+'/'+id,
                     type:'GET',
@@ -95,6 +96,7 @@ $(function(){
                         //disableActions(statInfo.actions);
                         buildCheckList(asset,id);
                         buildLCGraph();
+                        buildHistory(asset,id);
                     },
                     error:function(response){
                         $('#state').html('Error obtaining life-cycle state of asset.');
@@ -102,7 +104,7 @@ $(function(){
                 });
             },
             error:function(response){
-                alert('Not demoted');
+               showAlert('Error occured while demoting', 'error');
             }
         });
 
@@ -238,13 +240,11 @@ $(function(){
         var output='';
 
         for(var itemIndex in items){
-            console.log(itemIndex);
-            output='<div class="info-div alert alert-success">';
-            output+='<a data-dismiss="alert" class="close">x</a>';
-            output+='<i class="icon-info-sign"></i>';
-            output+='<span class="dateFull"> '+items[itemIndex].timestamp+'</span>';
-            output+='<a href="#">'+items[itemIndex].user+'</a> changed the asset state to '+items[itemIndex].state;
-            output+='</div>';
+            output+='<tr>';
+            output+='<td><span class="dateFull"> '+items[itemIndex].timestamp+'</span></td>';
+            output+='<td><a href="#">'+items[itemIndex].user+'</a> changed the asset from '+items[itemIndex].state
+            +' to '+items[itemIndex].targetState + '</td>';
+            output+='</tr>';
         }
 
         return output;
@@ -294,6 +294,12 @@ $(function(){
                 alert('Could not uncheck item');
             }
         });
+    }
+    
+    function showAlert(msg, type){
+    	var alert = $('.widget-content .alert');
+    	alert.removeClass().addClass('info-div alert alert-' + type).find('span').text(msg);
+    	alert.delay(1000).fadeIn("fast").delay(2000).fadeOut("fast");
     }
 
    /*

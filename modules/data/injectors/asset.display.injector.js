@@ -130,10 +130,12 @@ var injector = function () {
         storageUrlPattern=storageUrlPattern.replace('{ip}',ip);
 
         storageUrlPattern=storageUrlPattern.replace('{http}',http);
+        storageUrlPattern=storageUrlPattern.replace('{https}',https);
 
         storageUrlPattern=storageUrlPattern.replace('{context}',context);
         storageUrlPattern=storageUrlPattern.replace('{uuid}',uuid);
         storageUrlPattern=storageUrlPattern.replace('{id}',object.id);
+        storageUrlPattern=storageUrlPattern.replace('{type}',object.type);
 
         log.debug('new url: '+storageUrlPattern);
         return storageUrlPattern;

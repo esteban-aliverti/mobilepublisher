@@ -27,7 +27,7 @@ var installer = function () {
      @context: An object containing a reference to the root of an asset
      */
     function onAssetInitialization(context) {
-        log.info('reading configuration data from ' + context.bundle.getName() + ' [json].');
+        log.debug('reading configuration data from ' + context.bundle.getName() + ' [json].');
 
         //obtain the configuration file
         var configFile = context.bundle.get({extension: 'json'}).result();
@@ -35,7 +35,7 @@ var installer = function () {
         //If the configuration file does not exist then stop.
         if (!configFile) {
 
-            log.info('unable to load configuration file for ' + context.bundle.getName());
+            log.debug('unable to load configuration file for ' + context.bundle.getName());
             context['stopProcessing'] = true;
             return;
         }
@@ -48,9 +48,9 @@ var installer = function () {
         var artifact = utility.cloneObject(jsonConfig, ['tags', 'rate']);
 
 
-
         artifact.attributes.images_thumbnail = context.assetPath + artifact.attributes.images_thumbnail;
         artifact.attributes.images_banner = context.assetPath + artifact.attributes.images_banner;
+        //artifact.attributes.overview_url=context.assetPath+artifact.attributes.overview_url;
         //artifact.attributes.images_thumbnail = context.httpContext + artifact.attributes.images_thumbnail;
         //artifact.attributes.images_banner = context.httpContext + artifact.attributes.images_banner;
 
@@ -64,7 +64,7 @@ var installer = function () {
 
         //Set the ratings
         context['rate'] = jsonConfig.rate;
-        context['path'] = '/_system/governance/'+context.assetType+'/' + artifact.attributes.overview_provider +
+        context['path'] = '/_system/governance/' + context.assetType + '/' + artifact.attributes.overview_provider +
             '/' + artifact.attributes.overview_name + '/' + artifact.attributes.overview_version;
 
         log.debug('tags located: ' + context.tags);
@@ -150,7 +150,7 @@ var installer = function () {
                 }
             }
             return false;
-        }, {start: 0, count: 10});
+        }, null);
 
         //Check if any assets were located
         if (locatedAssets.length > 0) {
@@ -167,23 +167,23 @@ var installer = function () {
     function onAddAsset(context) {
         var artifactManager = context.artifactManager;
         var artifact = context.artifact;
-        var name=artifact.attributes.overview_name;
+        var name = artifact.attributes.overview_name;
 
 
         //Add the asset
-        log.info('about to add the asset : ' + artifact.name);
+        log.debug('about to add the asset : ' + artifact.name);
 
         //Store any resources in the Storage Manager
-        context.dataInjector.inject(artifact,context.dataInjectorModes.STORAGE);
+        context.dataInjector.inject(artifact, context.dataInjectorModes.STORAGE);
 
         artifactManager.add(artifact);
 
-        var assets=artifactManager.find(function(adapter){
-            return (adapter.attributes.overview_name==name)?true:false;
-        },1);
+        var assets = artifactManager.find(function (adapter) {
+            return (adapter.attributes.overview_name == name) ? true : false;
+        }, 1);
 
-        context['currentAsset']=assets[0]||{};
-        log.debug('added asset: '+stringify(context.currentAsset));
+        context['currentAsset'] = assets[0] || null;
+        log.debug('added asset: ' + stringify(context.currentAsset));
     }
 
     /*
@@ -198,7 +198,7 @@ var installer = function () {
         artifact.id = currentAsset.id;
 
         //Store any resources in the Storage Manager
-        context.dataInjector.inject(artifact,context.dataInjectorModes.STORAGE);
+        context.dataInjector.inject(artifact, context.dataInjectorModes.STORAGE);
 
         artifactManager.update(artifact);
         //log.info('finished updating the artifact : '+currentAsset.name);
@@ -220,7 +220,7 @@ var installer = function () {
         //Check if a lifecycle has been attached
         if (!currentLifeCycleName) {
 
-            log.debug('before calling current asset '+DEFAULT_LIFECYCLE);
+            log.debug('before calling current asset ' + DEFAULT_LIFECYCLE);
             log.debug(currentAsset);
 
             //Attach the lifecycle
@@ -231,7 +231,7 @@ var installer = function () {
         }
         else {
             //We skip moving to the Published state.
-            log.info('skipping promotion operations as a lifecycle has been attached');
+            log.debug('skipping promotion operations as a lifecycle has been attached');
             return;
         }
 

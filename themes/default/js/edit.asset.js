@@ -9,6 +9,8 @@ $(function () {
     var MSG_CONTAINER='#msg-container-recent-activity';
     var ERROR_CSS='alert alert-error';
     var SUCCESS_CSS='alert alert-info';
+    
+   
 
     $('#editAssetButton').on('click', function () {
         var data = {};
@@ -77,6 +79,8 @@ $(function () {
         //Place the message
         $(containerElement).html(infoMessage);
     }
-
+    
+    
+	$('.selectpicker').selectpicker();
 
 });
