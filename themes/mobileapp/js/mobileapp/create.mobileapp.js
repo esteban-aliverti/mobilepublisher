@@ -22,10 +22,10 @@ $('#txtOS').on("change",function() {
 	  
 	  
 	   if($('#txtOS').val() == 'android'){
-	   		$('#file-upload-text').html('SELECT .APK FILE');
+	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .APK FILE');
 	   		
 	   }else if($('#txtOS').val() == 'ios'){
-	   		$('#file-upload-text').html('SELECT .IPL FILE');	   		
+	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .IPL FILE');	   		
 	   }
 	  
 	  
