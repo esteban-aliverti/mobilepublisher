@@ -1,6 +1,6 @@
 <div class="asset-thumb-container">
 	<div class="row-fluid well-small uploadButton">
-		<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-primary offset10" name="addNewAssetButton"><i class="icon-cloud-upload"> </i> Upload App</a>
+		<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-primary offset10" name="addNewAssetButton"><i class="icon-add"> </i> Upload App</a>
 		<hr>
 	</div>
 	
@@ -51,8 +51,13 @@
                         </td>
                         
                          <td>
-                        	<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-primary" name="addNewAssetButton">Submit</a>
-                        	<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-danger" name="addNewAssetButton">Remove</a>
+                         	
+                         	{{#compare this.lifecycleState "Published"}}
+                         		<a  data-action="submit" class="btn btn-primary btn-action" name="addNewAssetButton">Submit</a>
+                        		<a  data-action="remove" class="btn btn-danger btn-action" name="addNewAssetButton">Remove</a>
+                         	{{/compare}}
+                         	
+                        	
                         </td>
                         
                     </tr>
