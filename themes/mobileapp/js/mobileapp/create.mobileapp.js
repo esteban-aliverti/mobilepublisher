@@ -100,7 +100,7 @@ $('#modal-upload-app').on('shown', function() {
 
 $(document).ready(function(){
 
-	/*$('#txtAppUpload').fileuploadFile({
+	$('#txtAppUpload').fileuploadFile({
         dataType: 'json',
        	add: function (e, data) {
 		           $('#btn-app-upload').click(function () {
@@ -115,7 +115,7 @@ $(document).ready(function(){
 		            //alert();
 		        }
 
-	}); */
+	});
 
 	$("#modal-upload-app").modal('show');
 
