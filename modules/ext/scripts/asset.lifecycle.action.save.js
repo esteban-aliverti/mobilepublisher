@@ -84,10 +84,11 @@ var module=function(){
 				um.getUserListOfRole("reviewer");
 				for(var j = 0; j < userList.length; j++) {
 					var userEmail =userList[j];
-					sendEmail(userEmail, "There is an app that needs to be reviewed.")
+					sendEmail(userEmail, "There is an app that needs to be reviewed. You can download the app from the Publisher. ");
 				}
 			   }else if(state='Published'){
 				//send email to developer
+					sendEmail(asset.provider, "Your app has been reviewed and published");
 			   }
                log.debug('Asset has been '+invokeAction+'ed to the next state.');
            }
