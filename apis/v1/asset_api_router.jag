@@ -14,10 +14,47 @@
 
 
 var config = require('/config/publisher.json');
+var mam_config = require('/config/mam_config.json');
 var caramel = require('caramel');
 
 var router = require('/modules/router-g.js').router();
 var routeManager = new router.Router();
+
+var makeid= function()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+var getExtension = function(file){
+	var path = file.getName();
+	var index = path.lastIndexOf('.');
+    var ext = index < path.length ? path.substring(index + 1) : '';
+	return ext;
+}
+var getFileOnly = function(file){
+	var path = file.getName();
+	var index = path.lastIndexOf('.');
+    var name = index < path.length ? path.substring(0,index) : '';
+	return name;
+}
+var saveFile = function(file){
+	if(file!=undefined){
+		var file_n= file.getName()
+		if(file_n==""){
+			return "";
+		}
+		var uid= makeid();
+		var file_name = mam_config.filePreciseLocation+uid+file_n;
+		file.saveAs(file_name);
+		return "/publisher/"+file_name;
+	}
+	return "";
+}
 
 
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
@@ -101,7 +138,55 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
             context.post['images_banner'] = '/publisher/config/defaults/img/banner.jpg';
         }
 
-        model.import('form.importer',context.post);
+		if(shortName !="mobileapp"){
+			model.import('form.importer',context.post);
+		}
+		
+		if(shortName =="mobileapp"){
+			var username=require('/modules/user.js').current(session).username;
+			var ctx = context.post;
+			log.info(ctx);
+			var files = request.getAllFiles();
+			var banner = files['bannerFile'];
+		 	banner = saveFile(banner);
+
+			var icon = files['iconFile'];
+			icon = saveFile(icon);
+
+			var screenshot1 = files['screenshot1File'];
+			screenshot1 = saveFile(screenshot1);
+
+			var screenshot2 = files['screenshot2File'];
+			screenshot2 = saveFile(screenshot2);
+
+			var screenshot3 = files['screenshot3File'];
+			screenshot3 = saveFile(screenshot3);
+			
+			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
+			var meta = ctx['appmeta'];
+			log.info(stringify(meta));
+			if(meta == undefined || meta==""){
+				log.debug("Application meta data was not found");
+		        response.sendError(500, 'Application meta data was not found');
+				return;
+			}
+			meta = parse(unescape(meta));
+			model.set('overview.bundleVersion',meta.version);
+			model.set('overview.packageName',meta.package);
+			model.set('overview.url',meta.path);
+			model.set('overview.name',ctx.name);
+			model.set('overview.platform',ctx.platform );
+			model.set('overview.version',ctx.version);
+			model.set('overview.provider', username);
+			model.set('overview.description',ctx.description);
+			model.set('overview.type',ctx.markettype);
+			model.set('overview.recentChanges',ctx.recentChanges);
+			model.set('images.thumbnail',icon);
+			model.set('images.banner',banner);
+			model.set('images.screenshots',screenshots);
+			
+		}
+
 
         //var assetModel = getModel(context.post);
 
