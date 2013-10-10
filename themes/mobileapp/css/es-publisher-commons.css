@@ -1044,3 +1044,10 @@ span.title {
     border: 1px solid #CCCCCC;
     box-shadow: none;
 }
+
+
+.btn-danger {
+    background: none repeat scroll 0 0 #DA4F49;
+    color: #FFFFFF;
+    text-shadow: none;
+}
