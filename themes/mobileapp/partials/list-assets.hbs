@@ -53,12 +53,12 @@
                          <td>
                          	
                          	{{#compare this.lifecycleState "Published"}}
-                         		<a  data-action="submit" data-app="{{this.id}}" class="btn btn-primary btn-action" name="addNewAssetButton">Submit</a>
+                         		<a  data-action="promote" data-app="{{this.id}}" class="btn btn-primary btn-action" name="addNewAssetButton">Unpublish</a>
                         		<a  data-action="remove" data-app="{{this.id}}" class="btn btn-danger btn-action" name="addNewAssetButton">Remove</a>
                          	{{/compare}}
                          	
                          		{{#compare this.lifecycleState "Created"}}
-                         		<a  data-action="submit" data-app="{{this.id}}" class="btn btn-primary btn-action" name="addNewAssetButton">Submit</a>
+                         		<a  data-action="promote" data-app="{{this.id}}" class="btn btn-primary btn-action" name="addNewAssetButton">Submit</a>
                         		<a  data-action="remove" data-app="{{this.id}}" class="btn btn-danger btn-action" name="addNewAssetButton">Remove</a>
                          	{{/compare}}
                          	

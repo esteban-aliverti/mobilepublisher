@@ -123,6 +123,11 @@ $(document).ready(function(){
 
 
 jQuery("#form-asset-create").submit(function() {
+	
+	$("#txtMarketHidden").val($("#txtMarket").val());
+	$("#txtOSHidden").val($("#txtOS").val());
+	
+		
     if(appMetaData == null){
     	if($('#txtOS').val()!= "webapp"){
     		$("#modal-upload-app").modal('show');
