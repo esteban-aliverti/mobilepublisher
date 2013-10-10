@@ -1,6 +1,7 @@
 <div class="asset-thumb-container">
 	<div class="row-fluid well-small uploadButton">
 		<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-primary offset10" name="addNewAssetButton"><i class="icon-cloud-upload"> </i> Upload App</a>
+		<hr>
 	</div>
 	
 	
@@ -9,10 +10,10 @@
             <table class="table table-striped list-asset-table">
                 <thead>
                 <th colspan="2"><a href="?sortby=name">Name <i class="icon-caret-down"></i></a></th>
-                 <th><a href="?sortby=os">OS <i class="icon-caret-down"></i></a></th>
-                <th><a href="?sortby=version">Version <i class="icon-caret-down"></i></a></th>
+                 <th><a href="?sortby=os">OS <i class="icon-caret-down"></i></a></th>                
                  <th><a href="?sortby=type">Type<i class="icon-caret-down"></i></a></th>
-                <th><a href="?sortby=owner">Owner <i class="icon-caret-down"></i></a></th>                
+                <th><a href="?sortby=owner">Owner <i class="icon-caret-down"></i></a></th>   
+                <th><a href="?sortby=version">Version <i class="icon-caret-down"></i></a></th>             
                 <th><a href="?sortby=createdDate">Created</i></a></th>
                 <th><a href="?sortby=status">Status <i class="icon-caret-down"></i></a></th>
                 <th><a href="?sortby=createdDate">Action</i></a></th>
@@ -32,15 +33,16 @@
                          <td>
                         <img src="/publisher/themes/mobileapp/img/mobileapps/{{this.attributes.overview_platform}}.png">
                         </td>
-                        <td>
-                        {{this.attributes.overview_version}}
-                        </td>
+                       
                         <td>
                         {{this.attributes.overview_type}}
                         </td>
                         <td>
                         {{this.attributes.overview_provider}}
-                        </td>                       
+                        </td> 
+                         <td>
+                        {{this.attributes.overview_version}}
+                        </td>                      
                         <td>
                         <small>Fri 29 Mar 2013 01:45:08 PM IST</small>
                         </td>

@@ -19,6 +19,16 @@ $('#txtOS').on("change",function() {
 		   $('#app-upload-block').css('display', 'block');
 		   $('#market-type-block').css('display', 'block');
 	  }
+	  
+	  
+	   if($('#txtOS').val() == 'android'){
+	   		$('#file-upload-text').html('SELECT .APK FILE');
+	   		
+	   }else if($('#txtOS').val() == 'ios'){
+	   		$('#file-upload-text').html('SELECT .IPL FILE');	   		
+	   }
+	  
+	  
 });
 
 
@@ -30,6 +40,12 @@ $('#txtMarket').on("change",function() {
 		  $('#package-select-block').css('display', 'none');
 		  $('#file-upload-block').css('display', 'block');
 	  }
+	  
+	   if($('#txtOS').val() == 'android'){
+	   		$('#file-upload-text').txt('SELECT .APK FILE');
+	   }else if($('#txtOS').val() == 'android'){
+	   		$('#file-upload-text').txt('SELECT .PLIST FILE');
+	   }
 });
 
 
