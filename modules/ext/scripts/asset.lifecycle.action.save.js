@@ -75,12 +75,41 @@ var module=function(){
                var asset=artifactManager.get(asset.id);
 
                artifactManager.promoteLifecycleState(invokeAction,asset);
-
+			   var state=artifactManager.getLifecycleState(artifact);
+			   if(state=='In-Review'){
+				//Send email to Reviewer 
+				//
+				var server = require('/modules/server.js');
+				var um = server.userManager(tenantId);
+				um.getUserListOfRole("reviewer");
+				for(var j = 0; j < userList.length; j++) {
+					var userEmail =userList[j];
+					sendEmail(userEmail, "There is an app that needs to be reviewed. You can download the app from the Publisher. ");
+				}
+			   }else if(state='Published'){
+				//send email to developer
+					sendEmail(asset.provider, "Your app has been reviewed and published");
+			   }
                log.debug('Asset has been '+invokeAction+'ed to the next state.');
            }
 
 
 		}
 	};
+};
+
+var sendEmail = function(email, template){
+	var mam_config = require('/config/mam-config.json');
+    content = template;
+    subject = "App Notification";
+
+    var email = require('email');
+    var sender = new email.Sender("smtp.gmail.com", "25", mam_config.email.senderAddress, mam_config.email.emailPassword, "tls");
+    sender.from = mam_config.email.senderAddress;
+
+    sender.to = email;
+    sender.subject = subject;
+    sender.text = content;
+    sender.send();
 };
 
