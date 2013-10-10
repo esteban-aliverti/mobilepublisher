@@ -224,12 +224,24 @@
 
 				<div class="row-fluid" >
 
-					<div id="app-upload-block" class="row-fluid">
-						<div class="fileupload fileupload-new" data-provides="fileupload" style="padding-left: 180px" id="file-upload-block">
-							<span class="btn btn-file"><span class="fileupload-new" id="txtAppUpload"> <i class="icon-plus-sign"></i>  SELECECT .APK FILE</span><span class="fileupload-exists">Change</span>
-								<input type="file" />
-							</span>
+					<div id="app-upload-block" class="row-fluid" style=" margin-top: 10px">
+						<div class="fileupload fileupload-new" data-provides="fileupload" id="file-upload-block">
+						<div class="input-append">
+							<div class="uneditable-input span3">
+								<i class="icon-file fileupload-exists"></i><span
+								class="fileupload-preview"></span>
+							</div>
+							<span class="btn btn-file" style="width: 180px; height: 20px"><span
+								class="fileupload-new" id="file-upload-text"><i class="icon-plus-sign"></i>  SELECT .APK FILE</span><span
+								class="fileupload-exists"><i class="icon-edit"> </i></span>
+								<input
+								id="txtAppUpload" type="file" name="file"
+								data-url="/publisher/api/mobileapp/upload">
+							</span><a href="#"
+							class="btn fileupload-exists" data-dismiss="fileupload"><i
+							class="icon-remove"></i></a>
 						</div>
+					</div>
 					
 						
 						<div id="package-select-block" class="row-fluid" style="display: none;">
