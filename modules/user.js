@@ -173,11 +173,11 @@ var isAuthorized = function (user, permission, action) {
  * @return {*}
  */
 var userSpace = function (username) {
-    try {
-        return require('/modules/server.js').options().userSpace.store + '/' + username;
-    } catch (e) {
-        return null;
-    }
+	var indexUsername = username;
+	if(indexUsername.indexOf('@') !== -1){
+		indexUsername = indexUsername.replace('@', ':');
+	}
+    return require('/modules/server.js').options().userSpace.store + '/' + indexUsername;
 };
 
 /**
@@ -218,7 +218,11 @@ var userExists = function (username) {
 };
 
 var privateRole = function (username) {
-    return USER_ROLE_PREFIX + username;
+	var indexUsername = username;
+	if(indexUsername.indexOf('@') !== -1){
+		indexUsername = indexUsername.replace('@', ':');
+	}
+    return USER_ROLE_PREFIX + indexUsername;
 };
 
 var register = function (username, password) {

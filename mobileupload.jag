@@ -1,6 +1,6 @@
 <%
 (function(){
-	var mam_config = require('/config/mam_config.json');
+	var mam_config = require('/config/mam-config.json');
 	var log=new Log();
 	var makeid= function()
 	{

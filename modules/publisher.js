@@ -278,9 +278,12 @@ var buildPermissionsList = function (tenantId, username, permissions, server) {
         for (var colIndex in accessibleCollections) {
 
             collection = accessibleCollections[colIndex];
-
+			var indexUsername = username;
+			if(indexUsername.indexOf('@') !== -1){
+				indexUsername = indexUsername.replace('@', ':');
+			}
             //Create the id used for the permissions
-            id = context + '/' + collection + '/' + username;
+            id = context + '/' + collection + '/' + indexUsername;
 
 
             //Check if a collection exists
