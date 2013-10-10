@@ -5,6 +5,8 @@
  */
 
 var render = function (theme, data, meta, require) {
+	
+	//print(data);
 
     var listPartial = 'list-assets';
 //Determine what view to show
