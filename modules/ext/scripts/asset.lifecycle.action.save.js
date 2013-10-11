@@ -47,9 +47,9 @@ var module=function(){
 
            artifactManager.attachLifecycle(lifeCycle,asset);
 
-           log.debug('Finished attaching the lifecycle to the asset'+stringify(asset));
+           log.info('Finished attaching the lifecycle to the asset'+stringify(asset));
 
-           log.debug('Check if there is an action to be performed when attaching a life-cycle');
+           log.info('Check if there is an action to be performed when attaching a life-cycle');
 
             var invokeAction='';
 
@@ -92,7 +92,8 @@ var module=function(){
 				//send email to developer
 					sendEmail(asset.provider, "Your app has been reviewed and published");
 			   }
-               log.debug('Asset has been '+invokeAction+'ed to the next state.');
+               log.info('Asset has been '+invokeAction+'ed to the next state.');
+			   log.info(artifactManager.getLifecycleState(asset));
            }
 
 

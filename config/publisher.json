@@ -22,24 +22,7 @@
         }
     },
     "userSpace": {
-        "space": "publisher",
-        "options": {
-            "type": "registry",
-            "serverUrl": "%https.host%/admin",
-            "path": "/_system/governance/users",
-            "username": "admin",
-            "password": "admin"
-        },
-        "accessible": [
-            {
-                "context": "/_system/governance",
-                "collections": ["gadgets", "sites", "ebooks"],
-                "actions": ["http://www.wso2.org/projects/registry/actions/get",
-                    "http://www.wso2.org/projects/registry/actions/add",
-                    "http://www.wso2.org/projects/registry/actions/delete",
-                    "authorize"]
-            }
-        ]
+        "store": "/_system/governance/users/store"
     },
     "app": {
         "RXT_MANAGER": "rxt_manager",
@@ -52,6 +35,12 @@
 
             "onAttach": {
                 "action": "Promote"
+            }
+        },
+		"MobileAppLifeCycle": {
+
+            "onAttach": {
+                "action": "Create"
             }
         }
     },

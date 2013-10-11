@@ -64,11 +64,16 @@ var init = function (options) {
                 log.debug('user space was created for user : ' + user.username + ' at ' + space);
             }
         }
+		log.info('>>>>sdfsdf');
+		log.info(space);
+		log.info(user.isAuthorized(space, carbon.registry.actions.PUT));
         if (!user.isAuthorized(space, carbon.registry.actions.PUT)) {
+			
             um = server.userManager(tenantId);
             perms = {};
             perms[space] = [carbon.registry.actions.GET, carbon.registry.actions.PUT, carbon.registry.actions.DELETE];
             um.authorizeRole(privateRole(user.username), perms);
+			log.info(perms);
             if (log.isDebugEnabled()) {
                 log.debug('user role ' + privateRole(user.username) + ' was authorized to access user space ' + space);
             }
@@ -173,6 +178,7 @@ var isAuthorized = function (user, permission, action) {
  * @return {*}
  */
 var userSpace = function (username) {
+	var log = new Log();
 	var indexUsername = username;
 	if(indexUsername.indexOf('@') !== -1){
 		indexUsername = indexUsername.replace('@', ':');
