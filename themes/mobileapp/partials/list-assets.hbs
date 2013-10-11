@@ -76,7 +76,11 @@
                         	{{/compare}}
                         	{{#compare this.lifecycleState "Unpublished"}}
                         		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "Approved"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-green"></i> {{this.lifecycleState}}</small></span>
                         	{{/compare}}	
+                        	
                         </td>
                         
                          <td>

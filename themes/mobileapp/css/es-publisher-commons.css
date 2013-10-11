@@ -1051,3 +1051,18 @@ span.title {
     color: #FFFFFF;
     text-shadow: none;
 }
+
+.btn-orange {
+    background: none repeat scroll 0 0 #FAA732;
+    color: #FFFFFF;
+    text-shadow: none;
+}
+
+.btn-blue {
+    background: none repeat scroll 0 0 #49AFCD;
+    color: #FFFFFF;
+    text-shadow: none;
+}
+
+
+
