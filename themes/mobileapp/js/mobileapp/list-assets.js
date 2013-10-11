@@ -14,7 +14,7 @@ var action = $(this).data("action");
 	});
 	
 	$( document ).ajaxComplete(function() {
-		//test
+		 location.reload();
 	});
 
  e.stopPropagation();
