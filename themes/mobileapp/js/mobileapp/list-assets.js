@@ -19,3 +19,22 @@ var action = $(this).data("action");
 
  e.stopPropagation();
 });
+
+
+
+$( ".tab-button" ).click(function() {
+	
+	var status = $(this).data("status");
+	
+	$( ".app-row" ).each(function( index ) {
+		$(this).css("display", "none");		
+		var appRowStatus = $(this).data("status");
+		if(status == "All"){
+			$(this).css("display", "table-row");
+		}else if(status == appRowStatus){
+			$(this).css("display", "table-row");
+		}
+	});
+	
+
+});
