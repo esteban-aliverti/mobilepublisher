@@ -5,6 +5,22 @@
 	</div>
 	
 	
+   <div class="well-small">
+   	
+   		 <div id="tab" class="btn-group" data-toggle="buttons-radio">
+					<a href="#" data-status="All" class="btn active tab-button" data-toggle="tab">All Apps</a>
+					<a href="#" data-status="Created" class="btn tab-button" data-toggle="tab">Created</a>
+					<a href="#" data-status="In-Review"  class="btn tab-button" data-toggle="tab">In-Review</a>
+					<a href="#" data-status="Published" class="btn tab-button" data-toggle="tab">Published</a>
+					<a href="#" data-status="Unpublished" class="btn tab-button" data-toggle="tab">Unpublished</a>
+					<a href="#" data-status="Rejected" class="btn tab-button" data-toggle="tab">Rejected</a>					
+		</div>
+   	
+   	
+   </div>
+  
+	
+	
 	{{#if artifacts}}
         <div class="row-fluid">
             <table class="table table-striped list-asset-table">
@@ -21,7 +37,7 @@
                 </thead>
                 <tbody>
                  {{#each artifacts}}
-                    <tr>
+                    <tr data-status="{{this.lifecycleState}}" class="app-row">
                         <td>
                         <img src="{{this.attributes.images_thumbnail}}" class="" />
                         </td>
