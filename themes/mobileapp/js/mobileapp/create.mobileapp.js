@@ -99,6 +99,9 @@ $('#modal-upload-app').on('shown', function() {
 
 
 $(document).ready(function(){
+	// $("#app-upload-progress").css("display", "block");
+	 //$("#app-upload-progress-done").css("display", "none");
+	
 
 	$('#txtAppUpload').fileuploadFile({
         dataType: 'json',
@@ -106,6 +109,7 @@ $(document).ready(function(){
 		           $('#btn-app-upload').click(function () {
 		                    //data.context = $('<p/>').text('Uploading...').replaceAll($(this));
 		                    data.submit();
+		                    $("#app-upload-progress-done").css("display", "block");
 		                });
 		        },
 		        done: function (e, data) {
@@ -113,6 +117,8 @@ $(document).ready(function(){
 					$('#appmeta').val(JSON.stringify(data._response.result));
 		        	//$('#txtWebapp').val(data._response.result[0]);
 		            //alert();
+		            //$("#app-upload-progress").css("display", "none");
+		            //$("#app-upload-progress-done").css("display", "block");
 		        }
 
 	});

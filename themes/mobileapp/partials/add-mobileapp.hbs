@@ -1,4 +1,15 @@
 <div class="content-div">
+	
+	<div class="row-fluid" id="app-upload-progress"  style="display: none">		
+		    <div class="progress progress-striped active">
+		    <div class="bar" style="width: 90%;"></div>
+		    </div>
+		    
+	</div>
+	
+	<div class="row-fluid well-small" id="app-upload-progress-done" style="display: none">	  
+		    App is uploaded successfully
+	</div>
 
 	<div class="row-fluid">
 		<form class="form-horizontal" id='form-asset-create' action="/publisher/api/asset/mobileapp" method="post" enctype="multipart/form-data">
@@ -179,7 +190,7 @@
 
 
 
-<div id="modal-upload-app" class="modal hide fade">
+<div id="modal-upload-app" class="modal hide fade" data-backdrop="static" data-keyboard="false">
 	<div class="modal-header">		
 		<h4>Add Mobile App</h4>
 	</div>

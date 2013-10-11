@@ -5,6 +5,8 @@
 */
 var render=function(theme,data,meta,require){
     //var _url = "/publisher/asset/"  + data.meta.shortName + "/" + data.info.id + "/edit"
+    
+  
 
 	var listPartial='view-asset';
 	//Determine what view to show
