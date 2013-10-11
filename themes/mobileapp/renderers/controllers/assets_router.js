@@ -7,6 +7,21 @@
 var render = function (theme, data, meta, require) {
 	
 	//print(data);
+	
+	var lifecycleColors = {"Demote": "btn-danger", "Submit": "btn-primary"};
+	
+	
+	for(var i = 0; i < data.artifacts.length; i++){	
+		var lifecycleAvailableActionsButtons = new Array();
+		for(var j = 0; j < data.artifacts[i].lifecycleAvailableActions.length; j++){	
+			var name = data.artifacts[i].lifecycleAvailableActions[j];		
+			lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});			
+		}
+		
+		data.artifacts[i].lifecycleAvailableActions = lifecycleAvailableActionsButtons;
+	}
+	
+	//print(data);
 
     var listPartial = 'list-assets';
 //Determine what view to show
