@@ -1,13 +1,6 @@
 <div class="asset-thumb-container">
-	<div class="row-fluid well-small uploadButton">
-		<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-primary offset10" name="addNewAssetButton"><i class="icon-plus-sign"> </i> New Application</a>
-		<hr>
-	</div>
-	
-	
-   <div class="well-small">
-   	
-   		 <div id="tab" class="btn-group" data-toggle="buttons-radio">
+	<div class="pull-left">
+		 <div id="tab" class="btn-group" data-toggle="buttons-radio">
 					<a href="#" data-status="All" class="btn active tab-button" data-toggle="tab">All Apps</a>
 					<a href="#" data-status="Created" class="btn tab-button" data-toggle="tab">Created</a>
 					<a href="#" data-status="In-Review"  class="btn tab-button" data-toggle="tab">In-Review</a>
@@ -15,9 +8,15 @@
 					<a href="#" data-status="Unpublished" class="btn tab-button" data-toggle="tab">Unpublished</a>
 					<a href="#" data-status="Rejected" class="btn tab-button" data-toggle="tab">Rejected</a>					
 		</div>
-   	
-   	
-   </div>
+	</div>
+	
+	<div class="row-fluid well-small uploadButton">
+		<a href="/publisher/asset/mobileapp" id="btn-create-asset" class="btn btn-primary offset10" name="addNewAssetButton"><i class="icon-plus-sign"> </i> New Application</a>
+		<hr>
+	</div>
+	
+	
+  
   
 	
 	
@@ -63,7 +62,21 @@
                         <small>Fri 29 Mar 2013 01:45:08 PM IST</small>
                         </td>
                          <td>
-                        <span class="lifecycle-state"><small><i class="icon-circle text-green"></i> {{this.lifecycleState}}</small></span>
+                         	{{#compare this.lifecycleState "Published"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-green"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "Created"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "In-Review"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "Rejected"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "Unpublished"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}	
                         </td>
                         
                          <td>
