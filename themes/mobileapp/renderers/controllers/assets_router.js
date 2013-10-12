@@ -10,8 +10,9 @@ var render = function (theme, data, meta, require) {
 	
 	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue"};
 	
-	
-	for(var i = 0; i < data.artifacts.length; i++){	
+	if(data.artifacts){
+		
+		for(var i = 0; i < data.artifacts.length; i++){	
 		var lifecycleAvailableActionsButtons = new Array();
 		for(var j = 0; j < data.artifacts[i].lifecycleAvailableActions.length; j++){	
 			var name = data.artifacts[i].lifecycleAvailableActions[j];		
@@ -19,7 +20,12 @@ var render = function (theme, data, meta, require) {
 		}
 		
 		data.artifacts[i].lifecycleAvailableActions = lifecycleAvailableActionsButtons;
+		}
+		
+		
+		
 	}
+	
 	
 	//print(data);
 
