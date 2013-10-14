@@ -8,7 +8,7 @@ var render = function (theme, data, meta, require) {
 	
 	//print(data);
 	
-	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue"};
+	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Accept": "btn-blue", "Reject": "btn-danger"};
 	
 	if(data.artifacts){
 		
