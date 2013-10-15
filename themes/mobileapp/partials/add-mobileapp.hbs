@@ -7,8 +7,12 @@
 		    
 	</div>
 	
-	<div class="row-fluid well-small" id="app-upload-progress-done" style="display: none">	  
-		    App is uploaded successfully
+	<div class="row-fluid well-small" id="app-upload-progress-done" style="display: none; padding-left: 44px">	  
+		    <div class="alert alert-block container span11">
+		    <button type="button" class="close" data-dismiss="alert">&times;</button>
+		    <h4>App is uploaded successfully!</h4>
+		    	Please enter the Application details below. 
+		    </div>
 	</div>
 
 	<div class="row-fluid">
@@ -194,7 +198,14 @@
 	<div class="modal-header">		
 		<h4>Add Mobile App</h4>
 	</div>
-	<div class="modal-body">
+	<div class="modal-body" id="modal-upload-progress" style="display: none">
+		Uploading
+			<div class="progress progress-striped active">
+		    	<div class="bar" style="width: 40%;"></div>
+		    </div>
+	</div>	
+	
+	<div class="modal-body" id="modal-upload-data">
 		<form class="pull-left">
 
 			<div class="control-group row-fluid">
@@ -289,7 +300,7 @@
 	<div class="modal-footer">
 		<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
 		<a href="#" id="btn-app-upload" class="btn btn-primary"
-		data-dismiss="modal" aria-hidden="true" id="btn-app-upload">Upload</a>
+		aria-hidden="true" id="btn-app-upload">Upload</a>
 	</div>
 </div>
 
