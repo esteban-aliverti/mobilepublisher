@@ -21,7 +21,7 @@ var render = function (theme, data, meta, require) {
 		
 		data.artifacts[i].lifecycleAvailableActions = lifecycleAvailableActionsButtons;
 		}
-		
+		 
 		
 		
 	}
