@@ -108,13 +108,16 @@ $(document).ready(function(){
        	add: function (e, data) {
 		           $('#btn-app-upload').click(function () {
 		                    //data.context = $('<p/>').text('Uploading...').replaceAll($(this));
-		                    data.submit();
-		                    $("#app-upload-progress-done").css("display", "block");
+		                    $("#modal-upload-data").css("display", "none");
+		                     $("#modal-upload-progress").css("display", "block");
+		                    data.submit();		                    
 		                });
 		        },
 		        done: function (e, data) {
 		        	appMetaData = data._response.result;
 					$('#appmeta').val(JSON.stringify(data._response.result));
+					$("#app-upload-progress-done").css("display", "block");
+					$('#modal-upload-app').modal('hide');
 		        	//$('#txtWebapp').val(data._response.result[0]);
 		            //alert();
 		            //$("#app-upload-progress").css("display", "none");

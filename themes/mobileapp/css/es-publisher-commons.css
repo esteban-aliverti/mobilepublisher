@@ -1064,5 +1064,25 @@ span.title {
     text-shadow: none;
 }
 
+.btn-blue:hover,
+.btn-blue:focus,
+.btn-blue:active,
+.btn-blue.active,
+.btn-blue.disabled,
+.btn-blue[disabled] {
+  color: #FFFFFF;
+  background-color: #49AFCD;
+  *background-color: #49AFCD;
+}
 
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active,
+.btn-danger.active,
+.btn-danger.disabled,
+.btn-danger[disabled] {
+  color: #FFFFFF;
+  background-color: #DA4F49;
+  *background-color: #DA4F49;
+}
 
