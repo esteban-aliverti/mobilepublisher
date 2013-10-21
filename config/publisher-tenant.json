@@ -27,7 +27,7 @@
             "type": "registry",
             "serverUrl": "%https.host%/admin",
             "path": "/_system/governance/users",
-            "username": "admin",
+            "username": "admin@admin.com",
             "password": "admin"
         },
         "accessible": [
