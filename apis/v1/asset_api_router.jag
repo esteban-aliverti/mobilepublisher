@@ -179,7 +179,11 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			model.set('overview.name',ctx.name);
 			model.set('overview.platform',ctx.platform );
 			model.set('overview.version',ctx.version);
-			model.set('overview.provider', username);
+			var indexUsername = username;
+			if(indexUsername.indexOf('@') !== -1){
+				indexUsername = indexUsername.replace('@', ':');
+			}
+			model.set('overview.provider', indexUsername);
 			model.set('overview.description',ctx.description);
 			model.set('overview.type',ctx.markettype);
 			model.set('overview.recentChanges',ctx.recentChanges);

@@ -115,7 +115,8 @@
     "permissions": {
         "created": ["Internal/private_{overview_provider}"],
         "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
-        "published": ["Internal/everyone", "Internal/private_{overview_provider}", "Internal/reviewer", "anon"],
+        "published": ["Internal/private_{overview_provider}", "Internal/reviewer"],
+		"approved": ["Internal/private_{overview_provider}", "Internal/reviewer"],
         "unpublished": ["Internal/private_{overview_provider}"]
     },
 
