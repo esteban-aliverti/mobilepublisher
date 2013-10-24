@@ -130,6 +130,14 @@ $(document).ready(function(){
 
 });
 
+$('#btn-app-upload').click(function () {
+		          if(appMetaData == null){
+		          	  $("#modal-upload-data").css("display", "none");
+		              $('#modal-upload-app').modal('hide');
+		          }		                  
+		                                      
+});
+
 
 jQuery("#form-asset-create").submit(function() {
 	
