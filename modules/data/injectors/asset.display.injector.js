@@ -78,6 +78,7 @@ var injector = function () {
 
 		        var artifact=artifactManager.get(object.id);
 		        var actions=artifactManager.availableActions(artifact);
+				
 				object['lifecycleAvailableActions'] = actions;
                 //Check if it is a valid uuid and create a new url
                 if((uuid)&&(utility.isValidUuid(uuid))){

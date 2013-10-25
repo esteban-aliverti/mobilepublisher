@@ -70,6 +70,7 @@ routeMnger.register('GET', 'publisher', '/publisher/assets/{type}/', function(co
 		caramel.render({
 			op : 'list',
 			cuser : user.current(session),
+			roles : user.current(session).getRoles(),
 			shortName : context.params.type,
 			artifacts : artifacts
 		});

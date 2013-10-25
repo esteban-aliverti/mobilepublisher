@@ -165,16 +165,15 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
 			var meta = ctx['appmeta'];
 			log.info(stringify(meta));
-			if(ctx.markettype!='Market' && meta == undefined || meta==""){
+			if(meta == undefined || meta==""){
 				log.debug("Application meta data was not found");
 		        response.sendError(500, 'Application meta data was not found');
 				return;
 			}
 			meta = parse(unescape(meta));
 			log.info('>>>sdfsdf');
-			log.info(meta.path);
-			model.set('overview.bundleVersion',meta.version);
-			model.set('overview.packageName',meta.package);
+			model.set('overview.bundleversion',meta.version);
+			model.set('overview.packagename',meta.package);
 			model.set('overview.url', meta.path);
 			model.set('overview.name',ctx.name);
 			model.set('overview.platform',ctx.platform );
@@ -186,7 +185,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			model.set('overview.provider', indexUsername);
 			model.set('overview.description',ctx.description);
 			model.set('overview.type',ctx.markettype);
-			model.set('overview.recentChanges',ctx.recentChanges);
+			model.set('overview.recentchanges',ctx.recentChanges);
 			model.set('images.thumbnail',icon);
 			model.set('images.banner',banner);
 			model.set('images.screenshots',screenshots);
