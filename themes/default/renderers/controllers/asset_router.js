@@ -11,23 +11,6 @@ var render=function(theme,data,meta,require){
 	switch(data.op){
 	case 'create':
 		listPartial='add-asset';
-<<<<<<< HEAD
-		
-		if(data.data.meta.shortName=='mobileapp'){
-			log.info('Special rendering case for mobileapp-using add-mobilepp.hbs');
-			listPartial='add-mobileapp';
-		}
-		
-		
-=======
-		
-		if(data.data.meta.shortName=='mobileapp'){
-			log.info('Special rendering case for mobileapp-using add-mobilepp.hbs');
-			listPartial='add-mobileapp';
-		}
-		
-		
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
 		break;
 	case 'view':
 		listPartial='view-asset';
@@ -61,7 +44,7 @@ var render=function(theme,data,meta,require){
         leftnav: [
             {
                 partial: 'left-nav',
-                context: require('/helpers/left-nav.js').generateLeftNavJson(data)
+                context: require('/helpers/left-nav.js').generateLeftNavJson(data, listPartial)
             }
         ],
         listassets: [

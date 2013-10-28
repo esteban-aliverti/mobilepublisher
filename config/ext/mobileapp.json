@@ -10,16 +10,14 @@
         "overview.name:order=1",
         "overview.provider:order=2",
         "overview.description:order=3",
-        "overview.version:order=4",
-        "overview.status:order=5",
-		"overview.description:css=mydescription"
+        "overview.version:order=4"
     ],
 
-    "tables":[
-	
-	{
-		"name":"*"
-	}
+    "tables": [
+
+        {
+            "name": "*"
+        }
 
     ],
 
@@ -35,50 +33,115 @@
             "name": "hidden",
             "value": "false"
         },
-		{
-			"field":"*",
-			"name":"css",
-			"value":"none"
-		},
         {
             "field": "*",
             "name": "visible",
             "value": "true"
         },
-	{
-	    "field":"overview.*",
-	    "name":"save",
-	    "value":"default"
-	},
-	{
-	    "field":"*.lifeCycle",
-	    "name":"save",
-	    "value":"asset.lifecycle.action.save"
-	}
+        {
+            "field": "overview.*",
+            "name": "save",
+            "value": "default"
+        },
+        {
+            "field": "overview.*",
+            "name": "editable",
+            "value": true
+        },
+         {
+            "field": "images.*",
+            "name": "editable",
+            "value": true
+        },
+        {
+            "field": "*.lifeCycle",
+            "name": "save",
+            "value": "asset.lifecycle.action.save"
+        },
+        {
+            "field": "overview.provider",
+            "name": "readOnly",
+            "value": "true"
+        },
+         {
+            "field":"overview.provider",
+            "name":"editable",
+            "value":false
+        },
+         {
+            "field":"overview.name",
+            "name":"editable",
+            "value":false
+        },
+        {
+            "field":"overview.version",
+            "name":"editable",
+            "value":false
+        },
+
     ],
 
-    "fields":[
-	{
-	    "name":"lifeCycle",
-	    "table":"*",
-	    "label":"Life Cycle",
-        "value":"SampleLifeCycle2"
-	},
-	{
-		"name":"banner",
-		"table":"images",
-		"type":"file"
-	},
-	{
-		"name":"icon",
-		"table":"images",
-		"type":"file"
-	},
-	{
-		"name":"screenshots",
-		"table":"images",
-		"type":"file"
-	}
-	
-    ]
+    "fields": [
+        {
+            "name": "lifeCycle",
+            "table": "*",
+            "label": "Life Cycle",
+            "value": "MobileAppLifeCycle"
+
+        } ,
+        {
+            "name": "banner",
+            "table": "images",
+            "type": "file"
+        },
+        {
+            "name": "thumbnail",
+            "table": "images",
+            "type": "file"
+        },
+        {
+            "name": "url",
+            "table": "overview",
+            "type": "file"
+        },
+        {
+            "name": "description",
+            "table": "overview",
+            "value": "The provider has not given a description."
+        }
+
+    ],
+
+    "permissions": {
+        "created": ["Internal/private_{overview_provider}"],
+        "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
+        "published": ["Internal/private_{overview_provider}", "Internal/reviewer"],
+		"approved": ["Internal/private_{overview_provider}", "Internal/reviewer"],
+        "unpublished": ["Internal/private_{overview_provider}"]
+    },
+
+
+    "storage": {
+
+        "images_banner": {
+
+            "lifecycle": {
+                "created": ["Internal/private_{overview_provider}"],
+                "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
+                "published": ["Internal/everyone", "Internal/private_{overview_provider}", "Internal/reviewer"],
+                "unpublished": ["Internal/private_{overview_provider}"]
+            }
+        },
+
+        "images_thumbnail": {
+
+            "lifecycle": {
+                "created": ["Internal/private_{overview_provider}"],
+                "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
+                "published": ["Internal/everyone", "Internal/private_{overview_provider}", "Internal/reviewer"],
+                "unpublished": ["Internal/private_{overview_provider}"]
+            }
+        }
+
+    }
 }

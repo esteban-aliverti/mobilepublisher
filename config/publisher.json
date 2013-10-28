@@ -4,22 +4,18 @@
         "http": "%http.host%"
     },
     "roles": {
-        "publisher": {
+        "internal/publisher": {
             "/permission/admin/login": ["ui.execute"]
         },
-<<<<<<< HEAD
-        "reviewer":{
-=======
-        "reviewer": {
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
+        "internal/reviewer": {
             "/permission/admin/login": ["ui.execute"]
         }
     },
     "user": {
-        "username": "admin",
+        "username": "admin@admin.com",
         "password": "admin"
     },
-    "userRoles": ["publisher"],
+    "userRoles": ["internal/publisher"],
     "permissions": {
         "login": {
             "/permission/admin/login": ["ui.execute"]
@@ -31,28 +27,17 @@
             "type": "registry",
             "serverUrl": "%https.host%/admin",
             "path": "/_system/governance/users",
-            "username": "admin",
+            "username": "admin@admin.com",
             "password": "admin"
         },
-<<<<<<< HEAD
-        "accessible":[
-            {
-                "context":"/_system/governance",
-                "collections":["gadgets","sites","ebooks"],
-                "actions":["http://www.wso2.org/projects/registry/actions/get",
-                           "http://www.wso2.org/projects/registry/actions/add",
-                           "http://www.wso2.org/projects/registry/actions/delete",
-                           "authorize"]
-=======
         "accessible": [
             {
                 "context": "/_system/governance",
-                "collections": ["gadgets", "sites", "ebooks"],
+                "collections": ["gadgets", "sites", "ebooks", "mobileapps"],
                 "actions": ["http://www.wso2.org/projects/registry/actions/get",
                     "http://www.wso2.org/projects/registry/actions/add",
                     "http://www.wso2.org/projects/registry/actions/delete",
                     "authorize"]
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
             }
         ]
     },
@@ -67,6 +52,12 @@
 
             "onAttach": {
                 "action": "Promote"
+            }
+        },
+		"MobileAppLifeCycle": {
+
+            "onAttach": {
+                "action": "Create"
             }
         }
     },
@@ -88,7 +79,7 @@
         "RENDERER": "/modules/router.caramel-renderer.js"
     },
     "ssoConfiguration": {
-        "enabled": true,
+        "enabled": false,
         "issuer": "publisher",
         "identityProviderURL": "%https.host%/sso/samlsso.jag",
         "keyStorePassword": "wso2carbon",

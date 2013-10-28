@@ -19,7 +19,6 @@ var ext_domain = require('/modules/ext/core/extension.domain.js').extension_doma
 var ext_core = require('/modules/ext/core/extension.core.js').extension_core();
 var ext_mng = require('/modules/ext/core/extension.management.js').extension_management();
 
-
 if (hostName === null || hostName === '') {
     hostName = 'localhost';
 }
@@ -43,6 +42,13 @@ user.init(pubConfig);
 var publisher = require('/modules/publisher.js');
 publisher.init(pubConfig);
 
+
+
+
+//var SUPER_TENANT_ID=-1234;
+//var event = require('/modules/event.js');
+//event.emit('tenantLoad', SUPER_TENANT_ID);
+
 //Configure Caramel
 caramel.configs({
     context: '/publisher',
@@ -50,11 +56,16 @@ caramel.configs({
     negotiation: true,
     themer: function () {
         //TODO: Hardcoded theme
-        return 'default';
+        return 'mobileapp';
     }
 
 });
 
+
+//Cause the super tenant to be load
+var SUPER_TENANT = -1234;
+var event = require('/modules/event.js');
+event.emit('tenantLoad', SUPER_TENANT);
 
 
 

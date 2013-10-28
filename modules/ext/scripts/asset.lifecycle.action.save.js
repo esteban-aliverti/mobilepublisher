@@ -22,14 +22,14 @@ var module=function(){
 	return{
 		execute:function(context){
 
-           log.info('Entered : '+meta.name);
+           log.debug('Entered : '+meta.name);
 
            var model=context.model;
            var template=context.template;
            var type=template.shortName;
 
            log.info('Entered '+meta.name);
-           log.info(stringify(context.actionMap));
+           log.debug(stringify(context.actionMap));
 
            //Get the id of the model
            var id=model.getField('*.id').value;
@@ -49,7 +49,7 @@ var module=function(){
 
            log.info('Finished attaching the lifecycle to the asset'+stringify(asset));
 
-           log.debug('Check if there is an action to be performed when attaching a life-cycle');
+           log.info('Check if there is an action to be performed when attaching a life-cycle');
 
             var invokeAction='';
 
@@ -75,12 +75,44 @@ var module=function(){
                var asset=artifactManager.get(asset.id);
 
                artifactManager.promoteLifecycleState(invokeAction,asset);
-
-               log.debug('Asset has been '+invokeAction+'ed to the next state.');
+			   var state=artifactManager.getLifecycleState(asset);
+			   if(state=='In-Review'){
+				//Send email to Reviewer 
+				//
+				var server = require('/modules/server.js');
+				var um = server.userManager(tenantId);
+				um.getUserListOfRole("reviewer");
+				for(var j = 0; j < userList.length; j++) {
+					var userEmail =userList[j];
+					log.info('>>useremail'+userEmail);
+					sendEmail(userEmail, "There is an app that needs to be reviewed. You can download the app from the Publisher. ");
+				}
+			   }else if(state=='Published'){
+				log.info('>>useremail'+asset.provider);
+				//send email to developer
+					sendEmail(asset.provider, "Your app has been reviewed and published");
+			   }
+               log.info('Asset has been '+invokeAction+'ed to the next state.');
+			   log.info(artifactManager.getLifecycleState(asset));
            }
 
 
 		}
 	};
+};
+
+var sendEmail = function(email, template){
+	var mam_config = require('/config/mam-config.json');
+    content = template;
+    subject = "App Notification";
+
+    var email = require('email');
+    var sender = new email.Sender("smtp.gmail.com", "25", mam_config.email.senderAddress, mam_config.email.emailPassword, "tls");
+    sender.from = mam_config.email.senderAddress;
+
+    sender.to = email;
+    sender.subject = subject;
+    sender.text = content;
+    sender.send();
 };
 

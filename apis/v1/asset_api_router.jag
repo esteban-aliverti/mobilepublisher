@@ -14,13 +14,12 @@
 
 
 var config = require('/config/publisher.json');
-var mam_config = require('/config/mam_config.json');
+var mam_config = require('/config/mam-config.json');
 var caramel = require('caramel');
 
 var router = require('/modules/router-g.js').router();
 var routeManager = new router.Router();
-var user=require('/modules/user.js');
-var publisher = require('/modules/publisher.js').publisher(request, session);
+
 var makeid= function()
 {
     var text = "";
@@ -57,10 +56,6 @@ var saveFile = function(file){
 	return "";
 }
 
-//var routeManager=application.get(config.app.ROUTE_MANAGER);
-var rxtManager = publisher.rxtManager;
-var modelManager = publisher.modelManager;
-var log=new Log();
 
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
 
@@ -71,19 +66,17 @@ routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', functio
     });
 
     if (!rxtTemplate) {
-        log.debug('The asset type: '+shortName+' could not be found');
+        log.debug('The asset type: ' + shortName + ' could not be found');
         response.sendError(404, 'Asset type not found.'); //TODO: Replace
     }
     else {
-        var model=modelManager.getModel(shortName);
+        var model = modelManager.getModel(shortName);
         //Obtain the username from the session and populate the provider field
-<<<<<<< HEAD
-        var username=session.get('LOGGED_IN_USER');
-=======
+
         var username=require('/modules/user.js').current(session).username;//.get('LOGGED_IN_USER');
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
         model.set('overview.provider',username);
         var output=model.export('form');
+
         print(output);
     }
 });
@@ -101,16 +94,28 @@ routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}/{id}', fu
 
         var artifact = artifactManager.get(id);
 
-        var model=modelManager.getModel(shortName);
+        //Perform some filerting logic
+        artifact=filterManager.filter(artifact);
 
-        model.import('asset',artifact);
+        if(!artifact){
+            response.sendError(401,'You do not have viewing rights for this asset');
+            return;
+        }
 
-        var result=model.export('form');
+        var model = modelManager.getModel(shortName);
+
+        //Customize the resource for the current app
+        dataInjector.inject(artifact,DataInjectorModes.DISPLAY);
+
+        model.import('asset', artifact);
+
+
+        var result = model.export('form');
 
         print(result);
     } catch (e) {
 
-        log.debug('The asset type: '+shortName+' with id: '+id+' could not be found.The following exception was thrown: '+e);
+        log.debug('The asset type: ' + shortName + ' with id: ' + id + ' could not be found.The following exception was thrown: ' + e);
         response.sendError(404, 'Asset with id ' + id + ' could not be found.Please check the server logs.');
     }
 
@@ -124,14 +129,24 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
     try {
 
         var model=modelManager.getModel(shortName);
+
+        //assigning default thumbnail and banner if not provided.
+        if(context.post['images_thumbnail'] == '') {
+            context.post['images_thumbnail'] = '/publisher/config/defaults/img/thumbnail.jpg';
+        }
+        if(context.post['images_banner'] == '') {
+            context.post['images_banner'] = '/publisher/config/defaults/img/banner.jpg';
+        }
+
 		if(shortName !="mobileapp"){
 			model.import('form.importer',context.post);
 		}
 		
 		if(shortName =="mobileapp"){
+			var username=require('/modules/user.js').current(session).username;
 			var ctx = context.post;
-			var files = request.getAllFiles();
 			log.info(ctx);
+			var files = request.getAllFiles();
 			var banner = files['bannerFile'];
 		 	banner = saveFile(banner);
 
@@ -149,22 +164,35 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			
 			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
 			var meta = ctx['appmeta'];
+			log.info(stringify(meta));
+			if(meta == undefined || meta==""){
+				log.debug("Application meta data was not found");
+		        response.sendError(500, 'Application meta data was not found');
+				return;
+			}
 			meta = parse(unescape(meta));
-			model.set('overview.bundleVersion',meta.version);
-			model.set('overview.packageName',meta.package);
-			model.set('overview.url',meta.path);
+			log.info('>>>sdfsdf');
+			model.set('overview.bundleversion',meta.version);
+			model.set('overview.packagename',meta.package);
+			model.set('overview.url', meta.path);
 			model.set('overview.name',ctx.name);
 			model.set('overview.platform',ctx.platform );
 			model.set('overview.version',ctx.version);
-			model.set('overview.provider',ctx.provider);
+			var indexUsername = username;
+			if(indexUsername.indexOf('@') !== -1){
+				indexUsername = indexUsername.replace('@', ':');
+			}
+			model.set('overview.provider', indexUsername);
 			model.set('overview.description',ctx.description);
 			model.set('overview.type',ctx.markettype);
-			model.set('overview.recentChanges',ctx.recentChanges);
+			model.set('overview.recentchanges',ctx.recentChanges);
 			model.set('images.thumbnail',icon);
 			model.set('images.banner',banner);
 			model.set('images.screenshots',screenshots);
 			
 		}
+
+
         //var assetModel = getModel(context.post);
 
         model.save();
@@ -172,27 +200,73 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
         //var createdAsset = artifactManager.add(assetModel);
 
         //Get the model id
-        var idField=model.get('*.id');
+        var idField = model.get('*.id');
 
-        if(idField){
-            print({ok: 'true', message: 'Asset created.', id:idField.value});
+        if (idField) {
+            print({ok: 'true', message: 'Asset created.', id: idField.value});
 			if(shortName =="mobileapp"){
 				response.sendRedirect("/publisher/assets/mobileapp/");
 			}
         }
-        else{
-            log.debug('An asset of type: '+shortNa,e+' could not be created.Probably a fault with publisher logic!');
+        else {
+            log.debug('An asset of type: ' + shortName + ' could not be created.Probably a fault with publisher logic!');
         }
 
     }
     catch (e) {
-        log.debug('An asset of type: '+shortName+' could not be created.The following exception was thrown: '+e);
-        response.sendError(500, 'An asset of type: '+shortName+' could not be created.Please check the server logs.');
+		log.info(e);
+        log.debug('An asset of type: ' + shortName + ' could not be created.The following exception was thrown: ' + e);
+        response.sendError(500, 'An asset of type: ' + shortName + ' could not be created.Please check the server logs.');
     }
 
 });
 
-routeManager.register('PUT', 'publisher', '/publisher/api/asset/{type}/{id}/{attr}/{value}', function (context) {
+routeManager.register('PUT', 'publisher', '/publisher/api/asset/{type}/{id}', function (context) {
+    var shortName = context.params.type;
+    var id = context.params.id;
+    var artifactManager = rxtManager.getArtifactManager(shortName);
+    log.info('CONTEXT: '+stringify(context.content));
+    try {
+        var modelA = modelManager.getModel(shortName);
+        var modelB = modelManager.getModel(shortName);
+
+        log.debug('POST:' + stringify(context.content));
+
+        modelA.import('form.importer', context.content);
+
+        modelA.set('*.id', id);
+
+        //Get the original artifact
+        var originalArtifact = artifactManager.get(id);
+
+        log.info('about to import data from originalArtifact');
+        modelB.import('asset', originalArtifact);
+
+        //Checks whether two models are equal
+        var reqProps=['overview.name', 'overview.provider', 'overview.version']
+
+        var isEqual = modelManager.assertEqual(modelA, modelB,reqProps);
+
+        //If they are not equal,abort the operation
+        if (!isEqual) {
+            log.info('trying to get fields which are different');
+            var diff=modelManager.diff(modelA,modelB,reqProps);
+            response.sendError(406, 'The name,provider and version of an asset cannot be changed.The following fields'
+            +' were modified: '+diff);
+            return;
+        }
+
+        var artifact = modelA.export('asset.exporter');
+        artifactManager.update(artifact);
+        var msg={};
+        msg['ok']=true;
+        msg['message']='asset updated';
+        print(msg);
+
+    } catch (e) {
+        log.debug('The asset ' + id + ' could not be updated.The following exception was thrown: ' + e);
+        response.sendError(404, 'The asset ' + id + ' could not be updated.Please check the server logs.');
+    }
     /*var shortName=context.params.type;
      var id=context.params.id;
      var attribute=context.params.attr;
@@ -225,14 +299,42 @@ routeManager.register('DELETE', 'publisher', '/publisher/api/asset/{type}/{id}',
         artifactManager.remove(id);
         print({ok: 'true', message: 'Asset deleted'});
     } catch (e) {
-        log.debug('Asset '+id+'could not be removed.An exception was thrown: '+e);
+        log.debug('Asset ' + id + 'could not be removed.An exception was thrown: ' + e);
         response.sendError(404, 'Asset with id: ' + id + ' could not be removed.');
     }
 
 
 });
 
-routeManager.handle(request, response);
 
+var securityModule=require('/modules/security/security.manager.js').securityManagementModule();
+
+var sm=securityModule.cached();
+
+//This will short circuit the handling of the requests
+var passed=sm.check(function(){
+    response.sendError(401);
+
+});
+
+//Stop servicing the request if the check failed
+if(passed){
+
+    var user=require('/modules/user.js');
+    var publisher = require('/modules/publisher.js').publisher(request, session);
+
+
+//var routeManager=application.get(config.app.ROUTE_MANAGER);
+    var rxtManager = publisher.rxtManager;
+    var modelManager = publisher.modelManager;
+    var dataInjector=publisher.dataInjector;
+    var DataInjectorModes=publisher.DataInjectorModes;
+    var filterManager=publisher.filterManager;
+    var log=new Log();
+
+
+
+    routeManager.handle(request, response);
+}
 
 %>

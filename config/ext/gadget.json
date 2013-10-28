@@ -15,10 +15,6 @@
         "overview.provider:order=2",
         "overview.description:order=3",
         "overview.version:order=4",
-<<<<<<< HEAD
-        "overview.status:save=disabled",
-=======
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
         "overview.version:save=disabled"
     ],
 
@@ -30,11 +26,7 @@
 
         {
             "name": "*"
-<<<<<<< HEAD
-        },
-=======
         }
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
 
     ],
 
@@ -59,12 +51,21 @@
             "field": "overview.*",
             "name": "save",
             "value": "default"
-<<<<<<< HEAD
+        },
+        {
+            "field": "overview.*",
+            "name": "editable",
+            "value": true
         },
         {
             "field": "images.*",
             "name": "save",
             "value": "default"
+        },
+        {
+            "field": "images.*",
+            "name": "editable",
+            "value": true
         },
         {
             "field": "*.lifeCycle",
@@ -77,28 +78,29 @@
             "value": "default"
         },
         {
-=======
+            "field": "overview.provider",
+            "name": "readOnly",
+            "value": "true"
         },
         {
-            "field": "images.*",
-            "name": "save",
-            "value": "default"
+            "field": "overview.provider",
+            "name": "editable",
+            "value": false
         },
         {
-            "field": "*.lifeCycle",
-            "name": "save",
-            "value": "asset.lifecycle.action.save"
+            "field": "overview.name",
+            "name": "editable",
+            "value": false
         },
         {
-            "field": "*.lifeCycle",
-            "name": "fetch",
-            "value": "default"
+            "field": "overview.version",
+            "name": "editable",
+            "value": false
         },
         {
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
-            "field":"overview.provider",
-            "name":"readOnly",
-            "value":"true"
+            "field": "overview.description",
+            "name": "value",
+            "value": "provider has not given a description"
         }
     ],
 
@@ -108,6 +110,55 @@
             "table": "*",
             "label": "Life Cycle",
             "value": "SampleLifeCycle2"
+        } ,
+        {
+            "name": "banner",
+            "table": "images",
+            "type": "file"
+        },
+        {
+            "name": "thumbnail",
+            "table": "images",
+            "type": "file"
+        },
+        {
+            "name": "description",
+            "table": "overview",
+            "value": "The provider has not given a description."
         }
-    ]
+    ],
+
+    "permissions": {
+        "created": ["Internal/private_{overview_provider}"],
+        "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
+        "published": ["Internal/everyone", "Internal/private_{overview_provider}", "Internal/reviewer", "anon"],
+        "unpublished": ["Internal/private_{overview_provider}"]
+    },
+
+    "storage": {
+
+        "images_banner": {
+
+
+            "lifecycle": {
+                "created": ["Internal/private_{overview_provider}"],
+                "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
+                "published": ["Internal/everyone", "Internal/private_{overview_provider}", "Internal/reviewer", "anon"],
+                "unpublished": ["Internal/private_{overview_provider}"]
+
+            }
+        },
+
+        "images_thumbnail": {
+
+            "lifecycle": {
+                "created": ["Internal/private_{overview_provider}"],
+                "in-review": ["Internal/reviewer", "Internal/private_{overview_provider}"],
+                "published": ["Internal/everyone", "Internal/private_{overview_provider}", "Internal/reviewer", "anon"],
+                "unpublished": ["Internal/private_{overview_provider}"]
+            }
+
+        }
+
+    }
 }

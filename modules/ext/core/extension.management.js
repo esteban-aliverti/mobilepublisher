@@ -67,7 +67,7 @@ var extension_management=function(){
      */
 	Model.prototype.export=function(type){
 		var adapter=this.adapterManager.find(type);
-        log.info('Invoking the exporter: '+stringify(adapter));
+        log.debug('Invoking the exporter: '+stringify(adapter));
 		return adapter.execute({model:this.dataModel,template:this.template});
 	}
 
@@ -80,7 +80,7 @@ var extension_management=function(){
 		var adapter=this.adapterManager.find(type);
 		var context=this.getContext();
 		context['inputData']=inputData;
-        log.info('Invoking the importer: '+stringify(adapter));
+        log.debug('Invoking the importer: '+stringify(adapter));
 		adapter.execute(context);
 	}
 
@@ -93,11 +93,11 @@ var extension_management=function(){
 
         //If there is no action map do nothing
         if(saveActionMap==null){
-            log.info('No action map found for model type: '+this.template.shortName);
+            log.debug('No action map found for model type: '+this.template.shortName);
             return;
         }
 
-        log.info('Action map found.Invoking the operation :save');
+        log.debug('Action map found.Invoking the operation :save');
 
         this.invokeActionMap(saveActionMap,'save');
     }
@@ -122,8 +122,8 @@ var extension_management=function(){
 
 
             if(defaultHandler!=null){
-                log.info('Executing default action : '+actionName+' for the operation: '+actionName);
-                log.info('Handler '+stringify(defaultHandler));
+                log.debug('Executing default action : '+actionName+' for the operation: '+actionName);
+                log.debug('Handler '+stringify(defaultHandler));
                 defaultHandler.execute({template:this.template,model:this.dataModel,actionMap:defaultAction,parent:this,rxtManager:this.rxtManager});
             }
 
@@ -139,13 +139,13 @@ var extension_management=function(){
                 })
 
                 if(handler!=null){
-                    log.info('Executing the action: '+action+' for operation: '+actionName)
+                    log.debug('Executing the action: '+action+' for operation: '+actionName)
                     handler.execute({template:this.template,model:this.dataModel,actionMap:actionMap[action],parent:this,rxtManager:this.rxtManager});
                 }
             }
         }
 
-        log.info('Finished invoking action map for operation: '+actionName);
+        log.debug('Finished invoking action map for operation: '+actionName);
     }
 
     //TODO: Remove this method
@@ -175,13 +175,77 @@ var extension_management=function(){
 		for each(var template in this.parser.templates){
 			
 			if(template.applyTo==type){
-                log.info('A model for type: '+type+'has been created.');
+                log.debug('A model for type: '+type+'has been created.');
 				return new Model({template:template,adapterManager:this.adapterManager,actionManager:this.actionManager,rxtManager:this.rxtManager});
 			}
 		}
 		log.debug('The model type: '+type+' could not be found.')
 		return null;
 	}
+
+    /*
+    The function checks whether two models a and b are equal by inspecting for the presence of the provided required
+    properties
+    @a: The object to be inspected
+    @b: The function will take the values of a and then compare them to the values of b
+    @return: True if the two models are identical,else false.
+     */
+    ModelManager.prototype.assertEqual=function(a,b,reqProps){
+        var reqProps=reqProps||[];
+
+        var fieldProp;
+        var fieldA;
+        var fieldB;
+        var isEqual=true;
+
+        //Go through each required property while the two objects are equal
+        for(var index=0;((index<reqProps.length)&&(isEqual));index++){
+
+            //Get the property name
+            fieldProp=reqProps[index];
+
+            //Obtain the field instances
+            fieldA= a.get(fieldProp);
+            fieldB= b.get(fieldProp);
+
+            //Check if the two fields are equal
+            if(fieldA.getValue()!=fieldB.getValue()){
+                isEqual=false;
+            }
+        }
+
+        return isEqual;
+    };
+
+    /*
+    The function determines the differences between two objects a and b based on the required properties
+    @a: The object to be inspected
+    @b: The function will take the values of a and then compare them to the values of b
+    @reqProps: The properties that should be equal between the two models
+    @return: The fields in the reqProps that are different
+     */
+    ModelManager.prototype.diff=function(a,b,reqProps){
+        var reqProps=reqProps||[];
+        var difference=[];
+        var fieldProp;
+        var fieldA;
+        var fieldB;
+
+        for(var index in reqProps){
+            fieldProp=reqProps[index];
+
+            fieldA= a.get(fieldProp);
+            fieldB= b.get(fieldProp);
+
+            log.info('field A '+fieldA.getValue()+' field B: '+fieldB.getValue());
+
+            if(fieldA.getValue()!=fieldB.getValue()){
+                difference.push(fieldProp);
+            }
+        }
+
+        return difference;
+    };
 	
 	return{
 		ModelManager:ModelManager

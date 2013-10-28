@@ -5,44 +5,7 @@ var caramel = require('caramel');
 
 var router = require('/modules/router-g.js').router();
 var routeManager = new router.Router();
-<<<<<<< HEAD
-var user=require('/modules/user.js');
-var stats = require('/modules/statistics.js');
 
-//var routeManager=application.get(config.app.ROUTE_MANAGER);
-var rxtManager = application.get(config.app.RXT_MANAGER);
-var modelManager = application.get(config.app.MODEL_MANAGER);
-var log=new Log();
-
-
-routeManager.register('GET', 'publisher', '/publisher/api/assets/{operation}/{type}/', function (context) {
-    var type = context.params.type;
-    var dbResults = stats.filterResultsByAssetType(stats.getBookmarkStats(user.current().username), type);
-
-    var artifactManager = rxtManager.getArtifactManager(type);
-    var model = modelManager.getModel(type);
-    var ticks = [],statData = [], name;
-    for (var i = 0; i < dbResults.length; i++) {
-        var artifact = artifactManager.get(dbResults[i].ASSET_ID);
-        model.import('asset', artifact);
-        name = (model.get('overview.name')).value;
-        statData.push([i,parseInt(dbResults[i]['NO_OF_BOOKMARKS'])]);
-        dbResults[i]['ASSET_ID'] = name;
-        ticks.push([i,name]);
-
-    }
-
-    var output = {};
-    output['stats'] = statData;
-    output['ticks'] = ticks;
-=======
-var user = require('/modules/user.js');
-var publisher = require('/modules/publisher.js').publisher(request, session);
-var stats = require('/modules/statistics.js');
-
-//var routeManager=application.get(config.app.ROUTE_MANAGER);
-var rxtManager = publisher.rxtManager;
-var modelManager = publisher.modelManager;
 var log = new Log();
 
 
@@ -52,6 +15,13 @@ routeManager.register('POST', 'publisher', '/publisher/api/assets/{operation}/{t
     var username = require('/modules/user.js').current(session).username;
     var startDate = context.post.startDate;
     var endDate = context.post.endDate;
+
+    //manipulate endDate to overcome date-picker issue
+    var date = new Date(Date.parse(endDate.replace(/-/g,"/")));
+    date.setDate(date.getDate() + 1);
+    // The getMonth() method returns the month (from 0 to 11) for the specified date
+    date.setMonth(date.getMonth() + 1);
+    endDate = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
 
     var output = {};
 
@@ -91,12 +61,31 @@ routeManager.register('POST', 'publisher', '/publisher/api/assets/{operation}/{t
 
     output['hotAssetStats'] = hotstAssetData;
     output['hotAssetTicks'] = hotAssetticks;
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
 
     print(output);
 });
 
-routeManager.handle(request, response);
+var securityModule=require('/modules/security/security.manager.js').securityManagementModule();
 
+var sm=securityModule.cached();
+
+//This will short circuit the handling of the requests
+var passed=sm.check(function(){
+    response.sendError(401);
+});
+
+//Stop servicing the request if the check failed
+if(passed){
+
+    var user = require('/modules/user.js');
+    var publisher = require('/modules/publisher.js').publisher(request, session);
+    var stats = require('/modules/statistics.js');
+
+    //var routeManager=application.get(config.app.ROUTE_MANAGER);
+    var rxtManager = publisher.rxtManager;
+    var modelManager = publisher.modelManager;
+
+    routeManager.handle(request, response);
+}
 
 %>

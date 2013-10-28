@@ -33,20 +33,18 @@ var module=function(){
 				return;
 			}
 			var data={};
-			
+
 			data['name']=table.name.toLowerCase()+'_'+field.name.toLowerCase();
 			data['label']=(fieldTemplate.label)?fieldTemplate.label:field.name;
 			data['isRequired']=(fieldTemplate.required)?true:false;
 			data['isTextBox']=(fieldTemplate.type=='text')?true:false;
 			data['isTextArea']=(fieldTemplate.type=='text-area')?true:false;
 			data['isOptions']=(fieldTemplate.type=='options')?true:false;
-<<<<<<< HEAD
-			data['isFileUpload']=(fieldTemplate.type=='file')?true:false;
-=======
 
             data['isReadOnly']=(fieldTemplate.meta.readOnly)?fieldTemplate.meta.readOnly:false;
+            data['isEditable']=(fieldTemplate.meta.editable)?fieldTemplate.meta.editable:false;
+            data['isFile']=(fieldTemplate.type=='file')?true:false;
 
->>>>>>> 7b77151d0d114757b90fecebbf53248c201f780b
 			data['value']=field.value;
 			
 			data['valueList']=csvToArray(fieldTemplate.value||'');
@@ -88,7 +86,7 @@ var module=function(){
 			}
 		}
 
-        log.info('Fields: '+stringify(fieldArray));
+        log.debug('Fields: '+stringify(fieldArray));
 		
 		return fieldArray;
 	}
@@ -109,7 +107,7 @@ var module=function(){
 		meta['singularLabel']=template.singularLabel;
 		meta['pluralLabel']=template.pluralLabel;
 
-        log.info('Meta: '+stringify(meta));
+        log.debug('Meta: '+stringify(meta));
 		return meta;
 	}
 	
@@ -129,7 +127,7 @@ var module=function(){
 
 		info['lifecycleState']=field?field.getValue():'';
 
-        log.info('Info: '+stringify(info));
+        log.debug('Info: '+stringify(info));
 		
 		return info;
 	}
@@ -137,7 +135,7 @@ var module=function(){
 	return{
 		execute:function(context){
 
-            log.info('Entered: '+meta.type);
+            log.debug('Entered: '+meta.type);
 
 			var model=context.model;
 			var template=context.template;
@@ -156,7 +154,7 @@ var module=function(){
 			struct['meta']=fillMeta(model,template);
 			struct['info']=fillInfo(model);
 
-            log.info('Leaving: '+meta.type);
+            log.debug('Leaving: '+meta.type);
 			
 			return struct;
 
