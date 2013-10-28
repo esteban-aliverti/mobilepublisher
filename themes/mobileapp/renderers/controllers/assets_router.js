@@ -6,17 +6,62 @@
 
 var render = function (theme, data, meta, require) {
 	
-	//print(data);
 	
-	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Accept": "btn-blue", "Reject": "btn-danger"};
+	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Approve": "btn-blue", "Reject": "btn-danger"};
 	
 	if(data.artifacts){
 		
 		for(var i = 0; i < data.artifacts.length; i++){	
 		var lifecycleAvailableActionsButtons = new Array();
 		for(var j = 0; j < data.artifacts[i].lifecycleAvailableActions.length; j++){	
-			var name = data.artifacts[i].lifecycleAvailableActions[j];		
-			lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});			
+			var name = data.artifacts[i].lifecycleAvailableActions[j];
+			
+			for(var k = 0; k < data.roles.length; k++){
+				print(data.roles[k]);
+				if(data.roles[k] == "admin"){
+					if(name == "Approve"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Reject"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Publish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Submit"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Unpublish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+				}
+				
+				if(data.roles[k] == "Internal/reviwer"){
+					if(name == "Approve"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Reject"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+				}
+				
+				if(data.roles[k] == "Internal/publisher"){					
+					if(name == "Publish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Submit"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Unpublish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+				}
+				
+				
+				
+			}
+					
+						
 		}
 		
 		data.artifacts[i].lifecycleAvailableActions = lifecycleAvailableActionsButtons;
