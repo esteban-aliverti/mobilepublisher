@@ -17,7 +17,7 @@ var render = function (theme, data, meta, require) {
 			var name = data.artifacts[i].lifecycleAvailableActions[j];
 			
 			for(var k = 0; k < data.roles.length; k++){
-				print(data.roles[k]);
+			//	print(data.roles[k]);
 				if(data.roles[k] == "admin"){
 					if(name == "Approve"){
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
@@ -36,7 +36,7 @@ var render = function (theme, data, meta, require) {
 					}
 				}
 				
-				if(data.roles[k] == "Internal/reviwer"){
+				if(data.roles[k] == "Internal/reviewer"){
 					if(name == "Approve"){
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
 					}
