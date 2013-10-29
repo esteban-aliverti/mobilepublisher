@@ -42,7 +42,7 @@ var filterModule = function () {
         var userRoles = context['roles'];
         var item;
         var items = [];
-		log.info('userroles >>>'+stringify(userRoles));
+		//log.info('userroles >>>'+stringify(userRoles));
         //Go through each data item
         for (var index in data) {
 
@@ -99,7 +99,7 @@ var filterModule = function () {
         var config = context.config.permissions;
         var roles = [];
         var state = state.toLowerCase();
-		log.info(context.data);
+		//log.info(context.data);
         //Check if any roles are specified for the state
         if (config.hasOwnProperty(state)) {
             roles = config[state];
