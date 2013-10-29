@@ -34,6 +34,8 @@ var render = function (theme, data, meta, require) {
 					if(name == "Unpublish"){
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
 					}
+					
+					continue;
 				}
 				
 				if(data.roles[k] == "Internal/reviewer"){
