@@ -3,44 +3,11 @@
         "https": "%https.host%/admin",
         "http": "%http.host%"
     },
-    "roles": {
-        "internal/publisher": {
-            "/permission/admin/login": ["ui.execute"]
-        },
-        "internal/reviewer": {
-            "/permission/admin/login": ["ui.execute"]
-        }
-    },
     "user": {
-        "username": "admin@admin.com",
+        "username": "admin",
         "password": "admin"
     },
-    "userRoles": ["internal/publisher"],
-    "permissions": {
-        "login": {
-            "/permission/admin/login": ["ui.execute"]
-        }
-    },
-    "userSpace": {
-        "space": "publisher",
-        "options": {
-            "type": "registry",
-            "serverUrl": "%https.host%/admin",
-            "path": "/_system/governance/users",
-            "username": "admin@admin.com",
-            "password": "admin"
-        },
-        "accessible": [
-            {
-                "context": "/_system/governance",
-                "collections": ["gadgets", "sites", "ebooks", "mobileapps"],
-                "actions": ["http://www.wso2.org/projects/registry/actions/get",
-                    "http://www.wso2.org/projects/registry/actions/add",
-                    "http://www.wso2.org/projects/registry/actions/delete",
-                    "authorize"]
-            }
-        ]
-    },
+    "tenantConfigs": "/_system/config/publisher/configs/publisher.json",
     "app": {
         "RXT_MANAGER": "rxt_manager",
         "ROUTE_MANAGER": "route_manager",
@@ -54,10 +21,9 @@
                 "action": "Promote"
             }
         },
-		"MobileAppLifeCycle": {
-
-            "onAttach": {
-                "action": "Create"
+        "MobileAppLifeCycle":{
+            "onAttach":{
+                "action":"Create"
             }
         }
     },
@@ -87,6 +53,9 @@
         "responseSigningEnabled": "true",
         "publisherAcs": "%https.host%/publisher/sso",
         "keyStoreName": "/repository/resources/security/wso2carbon.jks"
+    },
+    "constants" :{
+    "assetCreatedDateLength" : 20
     }
 
 }

@@ -1,5 +1,16 @@
 /*
- Description:The class is used to provided an API to store files in a source indepedent way
+ Description:The class is used to provided an API to store files in a source independent way
+             It supports the following operations:
+             1. get(key)
+             2. put({file,contentType})
+             The StorageManager works by using a UUID as the key for the stored file.
+
+             This implementation needs to be changed such that the StorageManager can use multiple
+             providers (e.g. db or filesystem)
+
+Filename: storage.js
+Created Date: 15/10/2013
+
  */
 var storageModule = function () {
 
@@ -19,7 +30,11 @@ var storageModule = function () {
         this.context = null;
         this.isCached = false;
 
+
+
         this.init(options);
+
+
 
         //If caching is enabled obtain
         if (this.isCached) {
@@ -39,7 +54,7 @@ var storageModule = function () {
         this.prepare();
 
         //Attach a new driver
-        var driver = this.driverManager.get('default');
+        var driver = this.driverManager.get(this.connectionInfo.dataSource);
         this.modelManager.driver = driver;
 
     };
@@ -53,7 +68,7 @@ var storageModule = function () {
         this.driverManager = new driverManagement.DriverManager();
 
         //Get a default driver
-        var driver = this.driverManager.get('default');
+        var driver = this.driverManager.get(this.connectionInfo.dataSource);
 
         //Create an instance of the model manager
         this.modelManager = new modelManagement.ModelManager({driver: driver, connectionInfo: this.connectionInfo});
@@ -63,11 +78,11 @@ var storageModule = function () {
         var cachedManager = application.get(CACHE_SM);
 
         if (cachedManager) {
-            //log.info('cached');
+            //log.debug('cached');
             return cachedManager;
         }
         else {
-            //log.info('not cached');
+            //log.debug('not cached');
             return null;
         }
     }
@@ -92,7 +107,7 @@ var storageModule = function () {
 
         //Obtain a resource model
         var resource = this.modelManager.get('Resource');
-
+		var fileName;
         //value should contain the file path and content type
         var file;
 
@@ -117,10 +132,68 @@ var storageModule = function () {
 
         //Save the resource
         resource.save();
+        
+        //log.info(file.getPath());
+        
+        //log.info(file.getName());
+        fileName=parseFileName(file.getName());
 
-        return resource.uuid+'/'+file.getName();
+        return resource.uuid+'/'+fileName;
     };
 
+
+var FIRST_ELEMENT=0;
+var WINDOWS_SPLITTER='\\';
+
+/*
+The function accepts a file path and extracts the name.It can process upload file paths
+sent from IE and other browsers
+ */
+function parseFileName(url){
+    var fileName=determineOS(url);
+    //log.info('file name:'+fileName);
+    return fileName;
+}
+
+/*
+The function determines the type of OS which the file path originates
+@path: The path to be processed
+@return: The extracted file name
+ */
+function determineOS(path){
+    var components=path.split('\\');
+
+    if(components.length>1){
+        return obtainFromWindowsPath(components);
+    }
+    return obtainFromOtherOSPath(path);
+}
+
+/*
+The function obtains a windows path
+@path: The  to be processed
+@return: The extracted file name
+ */
+function obtainFromWindowsPath(path){
+	//log.info('windows path:'+fileName);
+   var fileName=path[path.length-1];
+   return fileName;
+}
+
+/*
+The function is used to extract a file name from a non windows path
+@path: The path to be processed
+@return: The extracted file name
+ */
+	function obtainFromOtherOSPath(path){
+	   var comps=path.split('/');
+	   //log.info('other os: '+comps);
+	
+	   if(comps.length<=1){
+	       return comps[FIRST_ELEMENT];
+	   }
+	   return comps[comps.length-1];
+	}
     /*
      The function returns a url to the provided key
      @key: The key by which to search
@@ -139,19 +212,19 @@ var storageModule = function () {
         var id;
         //The key did not have a file component
         if(splitList.length<2){
-            //log.info('just uuid');
+            //log.debug('just uuid');
             id=key;
         }
         else{
-            //log.info('uuid/file');
+            //log.debug('uuid/file');
             id=splitList[0];
         }
 
-        //log.info('uuid is '+id);
+        //log.debug('uuid is '+id);
 
         var results = resource.find({uuid:id}) || [];
 
-        //log.info(results[0].fileName);
+        //log.debug(results[0].fileName);
         return results[0] || null;
     };
 

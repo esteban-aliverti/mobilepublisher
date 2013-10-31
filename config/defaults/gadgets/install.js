@@ -34,6 +34,19 @@ var installer = function () {
         //Create the deployment object
         var artifact = {};
 
+        var now =new String(new Date().valueOf());
+        var length = now.length;
+        var prefix = 20;
+        var onsetVal = '';
+            if(length != prefix){
+                    var onset = prefix - length;
+                    for(var i = 0; i < onset; i++){
+                        onsetVal+='0';
+                    }
+            }
+        now = onsetVal+now;
+
+
         artifact['attributes'] = {};
 
         //Fill the attributes
@@ -49,6 +62,7 @@ var installer = function () {
 
         artifact['attributes']['images_thumbnail'] = context.assetPath +context.bundle.getName()+ '/thumbnail.jpg';
         artifact['attributes']['images_banner'] = context.assetPath + context.bundle.getName()+'/banner.jpg';
+        artifact['attributes']['overview_createdtime'] = now;
 
 
 

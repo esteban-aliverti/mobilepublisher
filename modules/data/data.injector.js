@@ -17,7 +17,8 @@ var dataInjectorModule = function () {
         'DEFAULT': 1,
         'INIT': 2,
         'STORAGE': 3,
-        'DISPLAY': 4
+        'DISPLAY': 4,
+        'UPDATE':5
     };
 
 
@@ -28,6 +29,7 @@ var dataInjectorModule = function () {
         this.injectors[INJECTOR_MODES.STORAGE] = [];
         this.injectors[INJECTOR_MODES.DISPLAY] = [];
         this.injectors[INJECTOR_MODES.DEFAULT]=[];
+        this.injectors[INJECTOR_MODES.UPDATE]=[];
         this.globals={};
 
         this.buildInjector();
@@ -48,7 +50,7 @@ var dataInjectorModule = function () {
 
         //Skip the injection step as the default mode will not do anything
         if(mode==INJECTOR_MODES.DEFAULT){
-            log.info('The default mode does nothing :p .Specify an injector mode!');
+            log.debug('The default mode does nothing :p .Specify an injector mode!');
             return;
         }
 
@@ -135,7 +137,7 @@ var dataInjectorModule = function () {
 
                 //Check if handling logic should halt
                 if (!result) {
-                    log.info('failed to execute injector on object: ' + stringify(object));
+                    log.debug('failed to execute injector on object: ' + stringify(object));
                     return;
                 }
             }

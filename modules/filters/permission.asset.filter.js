@@ -28,7 +28,7 @@ var filterModule = function () {
             return true;
         }
 
-        log.info('not applying filter as a permission block has not been specified for the asset type.');
+        log.debug('not applying filter as a permission block has not been specified for the asset type.');
 
         return false;
     }
@@ -42,27 +42,34 @@ var filterModule = function () {
         var userRoles = context['roles'];
         var item;
         var items = [];
-		log.info('userroles >>>'+stringify(userRoles));
+
         //Go through each data item
         for (var index in data) {
 
             item = data[index];
 
-            //Obtain the permissions for the current lifecycle state
-            permissableRoles = obtainPermissibleRoles(context, item.lifecycleState);
-			log.info('permissableroles >>>'+permissableRoles);
-            //Fill in dynamic values
-            permissableRoles = fillDynamicPermissibleRoles(item, permissableRoles);
-			log.info('after permissableroles >>>'+permissableRoles);
-            //Check if the user has any of the roles specified for the state
-            var commonRoles = utility.intersect(userRoles, permissableRoles, function (a, b) {
-                return (a == b);
-            });
-			log.info('commonroles >>>'+stringify(commonRoles));
-            //Check if we have common roles
-            if (commonRoles.length > 0) {
+            //TODO: We are ignoring any assets without a lifecycle state
+            if(item.lifecycleState) {
 
-                items.push(item);
+                //Obtain the permissions for the current lifecycle state
+                permissableRoles = obtainPermissibleRoles(context, item.lifecycleState);
+
+                //Fill in dynamic values
+                permissableRoles = fillDynamicPermissibleRoles(item, permissableRoles);
+
+                //Check if the user has any of the roles specified for the state
+                var commonRoles = utility.intersect(userRoles, permissableRoles, function (a, b) {
+                    return (a == b);
+                });
+
+                //Check if we have common roles
+                if (commonRoles.length > 0) {
+
+                    items.push(item);
+                }
+            }
+            else{
+                log.debug('ignoring '+item.attributes.overview_name+' as it does not have a lifecycle state.');
             }
         }
 
@@ -80,12 +87,9 @@ var filterModule = function () {
     function fillDynamicPermissibleRoles(item, permissions) {
         var list = [];
         for (var index in permissions) {
-			var indexUsername = item.attributes.overview_provider;
-			if(indexUsername.indexOf('@') !== -1){
-				indexUsername = indexUsername.replace('@', ':');
-			}
-            list.push(permissions[index].replace('{overview_provider}', indexUsername));
+            list.push(permissions[index].replace('{overview_provider}', item.attributes.overview_provider));
         }
+
         return list;
     }
 
@@ -99,7 +103,7 @@ var filterModule = function () {
         var config = context.config.permissions;
         var roles = [];
         var state = state.toLowerCase();
-		log.info(context.data);
+
         //Check if any roles are specified for the state
         if (config.hasOwnProperty(state)) {
             roles = config[state];

@@ -5,12 +5,12 @@
  */
 
 var render = function (theme, data, meta, require) {
-
     var listPartial = 'list-assets';
 //Determine what view to show
     switch (data.op) {
         case 'list':
             listPartial = 'list-assets';
+            data = require('/helpers/view-asset.js').format(data);
             break;
         case 'statistics':
             listPartial = 'statistics';

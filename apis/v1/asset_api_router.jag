@@ -12,49 +12,13 @@
  Created Date: 29/7/2013
  */
 
+require('/modules/publisher.js').exec(function(ctx) {
 
 var config = require('/config/publisher.json');
-var mam_config = require('/config/mam-config.json');
 var caramel = require('caramel');
 
 var router = require('/modules/router-g.js').router();
 var routeManager = new router.Router();
-
-var makeid= function()
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
-var getExtension = function(file){
-	var path = file.getName();
-	var index = path.lastIndexOf('.');
-    var ext = index < path.length ? path.substring(index + 1) : '';
-	return ext;
-}
-var getFileOnly = function(file){
-	var path = file.getName();
-	var index = path.lastIndexOf('.');
-    var name = index < path.length ? path.substring(0,index) : '';
-	return name;
-}
-var saveFile = function(file){
-	if(file!=undefined){
-		var file_n= file.getName()
-		if(file_n==""){
-			return "";
-		}
-		var uid= makeid();
-		var file_name = mam_config.filePreciseLocation+uid+file_n;
-		file.saveAs(file_name);
-		return "/publisher"+file_name;
-	}
-	return "";
-}
 
 
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
@@ -73,7 +37,7 @@ routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', functio
         var model = modelManager.getModel(shortName);
         //Obtain the username from the session and populate the provider field
 
-        var username=require('/modules/user.js').current(session).username;//.get('LOGGED_IN_USER');
+        var username=require('store').server.current(session).username;//.get('LOGGED_IN_USER');
         model.set('overview.provider',username);
         var output=model.export('form');
 
@@ -95,7 +59,7 @@ routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}/{id}', fu
         var artifact = artifactManager.get(id);
 
         //Perform some filerting logic
-        artifact=filterManager.filter(artifact);
+        artifact=filterManager.filter(artifact,session);
 
         if(!artifact){
             response.sendError(401,'You do not have viewing rights for this asset');
@@ -138,60 +102,16 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
             context.post['images_banner'] = '/publisher/config/defaults/img/banner.jpg';
         }
 
-		if(shortName !="mobileapp"){
-			model.import('form.importer',context.post);
-		}
-		
-		if(shortName =="mobileapp"){
-			var username=require('/modules/user.js').current(session).username;
-			var ctx = context.post;
-			log.info(ctx);
-			var files = request.getAllFiles();
-			var banner = files['bannerFile'];
-		 	banner = saveFile(banner);
+        model.import('form.importer',context.post);
 
-			var icon = files['iconFile'];
-			icon = saveFile(icon);
+        //Perform validations on the asset
+        var report=model.validate();
 
-			var screenshot1 = files['screenshot1File'];
-			screenshot1 = saveFile(screenshot1);
-
-			var screenshot2 = files['screenshot2File'];
-			screenshot2 = saveFile(screenshot2);
-
-			var screenshot3 = files['screenshot3File'];
-			screenshot3 = saveFile(screenshot3);
-			
-			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
-			var meta = ctx['appmeta'];
-			log.info(stringify(meta));
-			if(meta == undefined || meta==""){
-				log.debug("Application meta data was not found");
-		        response.sendError(500, 'Application meta data was not found');
-				return;
-			}
-			meta = parse(unescape(meta));
-			log.info('>>>sdfsdf');
-			model.set('overview.bundleversion',meta.version);
-			model.set('overview.packagename',meta.package);
-			model.set('overview.url', meta.path);
-			model.set('overview.name',ctx.name);
-			model.set('overview.platform',ctx.platform );
-			model.set('overview.version',ctx.version);
-			var indexUsername = username;
-			if(indexUsername.indexOf('@') !== -1){
-				indexUsername = indexUsername.replace('@', ':');
-			}
-			model.set('overview.provider', indexUsername);
-			model.set('overview.description',ctx.description);
-			model.set('overview.type',ctx.markettype);
-			model.set('overview.recentchanges',ctx.recentChanges);
-			model.set('images.thumbnail',icon);
-			model.set('images.banner',banner);
-			model.set('images.screenshots',screenshots);
-			
-		}
-
+        //If the report indicates the model has failed validations send an error
+        if((report)&&(report.failed)){
+            print({ok:false,message:'Validation failure',report:report});
+            return;
+        }
 
         //var assetModel = getModel(context.post);
 
@@ -204,9 +124,6 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 
         if (idField) {
             print({ok: 'true', message: 'Asset created.', id: idField.value});
-			if(shortName =="mobileapp"){
-				response.sendRedirect("/publisher/assets/mobileapp/");
-			}
         }
         else {
             log.debug('An asset of type: ' + shortName + ' could not be created.Probably a fault with publisher logic!');
@@ -214,32 +131,55 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 
     }
     catch (e) {
-		log.info(e);
         log.debug('An asset of type: ' + shortName + ' could not be created.The following exception was thrown: ' + e);
         response.sendError(500, 'An asset of type: ' + shortName + ' could not be created.Please check the server logs.');
     }
 
 });
 
-routeManager.register('PUT', 'publisher', '/publisher/api/asset/{type}/{id}', function (context) {
+routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}/{id}', function (context) {
     var shortName = context.params.type;
     var id = context.params.id;
+    var msg={};
     var artifactManager = rxtManager.getArtifactManager(shortName);
-    log.info('CONTEXT: '+stringify(context.content));
+
+if(context.post['images_thumbnail'] instanceof Array){
+	context.post['images_thumbnail'] = context.post['images_thumbnail'][0];
+}
+if(context.post['images_banner'] instanceof Array){
+	context.post['images_banner'] = context.post['images_banner'][0];
+}
+
     try {
         var modelA = modelManager.getModel(shortName);
         var modelB = modelManager.getModel(shortName);
 
-        log.debug('POST:' + stringify(context.content));
-
-        modelA.import('form.importer', context.content);
-
-        modelA.set('*.id', id);
+        //Handle any files
+        inspectFiles(request,context.post);
 
         //Get the original artifact
         var originalArtifact = artifactManager.get(id);
 
-        log.info('about to import data from originalArtifact');
+        modelA.import('form.importer', context.post);
+
+        //Validation requires the lifecycle state
+        modelA.set('*.lifecycleState',originalArtifact.lifecycleState);
+
+        var report=modelA.validate();
+
+        //Check if the validation check has failed
+        if((report)&&(report.failed)){
+
+            msg['ok']=false;
+            msg['report']=report;
+            print(msg);
+            log.debug(msg);
+            return;
+        }
+
+
+        modelA.set('*.id', id);
+
         modelB.import('asset', originalArtifact);
 
         //Checks whether two models are equal
@@ -249,16 +189,131 @@ routeManager.register('PUT', 'publisher', '/publisher/api/asset/{type}/{id}', fu
 
         //If they are not equal,abort the operation
         if (!isEqual) {
-            log.info('trying to get fields which are different');
+            log.debug('trying to get fields which are different');
+            var diff=modelManager.diff(modelA,modelB,reqProps);
+            response.sendError(406, 'The name,provider and version of an asset cannot be changed.The following fields'
+                    +' were modified: '+diff);
+            return;
+        }
+        modelA.set("overview.createdtime",modelB.get("overview.createdtime").value);
+        var artifact = modelA.export('asset.exporter');
+
+        dataInjector.inject(artifact,DataInjectorModes.UPDATE);
+
+        artifactManager.update(artifact);
+
+        dataInjector.inject(artifact,DataInjectorModes.DISPLAY);
+
+        msg['ok']=true;
+        msg['message']='asset updated';
+        msg['asset']=artifact;
+        print(msg);
+
+    } catch (e) {
+        log.debug('The asset ' + id + ' could not be updated.The following exception was thrown: ' + e);
+        response.sendError(404, 'The asset ' + id + ' could not be updated.Please check the server logs.');
+    }
+});
+
+/*
+ The function inspects the files sent with a request.If files are found
+ they are added to Storage and then the generated uuids are added to
+ the POST parameter object
+ @req: A request object
+ @params: The POST parameters
+ */
+function inspectFiles(req, params) {
+    var files = req.getAllFiles();
+    var fileName;
+    var file;
+    var uuid = '';
+    var extension;
+
+
+    var storageManager = new storageModule.StorageManager({
+        context: 'storage',
+        isCached: false,
+        connectionInfo: {
+            dataSource: storageConfig.dataSource
+        }
+    });
+
+
+    for (var index in files) {
+
+        file = files[index];
+
+        log.debug('file: ' + index);
+
+        //Put the file in storage and get a uuid as a reference
+        var resource = {};
+        resource['file'] = file;
+        extension = utility.fileio.getExtension(file);
+        resource['contentType'] = utility.fileio.getContentType(extension);
+
+        uuid=storageManager.put(resource);
+
+        log.debug('uuid added: '+uuid);
+
+        //Add a new  entry into the POST parameters containing the uuid
+        params[index] = uuid;
+
+    }
+}
+
+routeManager.register('PUT', 'publisher', '/publisher/api/asset/{type}/{id}', function (context) {
+    var shortName = context.params.type;
+    var id = context.params.id;
+    var msg={};
+    var artifactManager = rxtManager.getArtifactManager(shortName);
+
+
+    try {
+        var modelA = modelManager.getModel(shortName);
+        var modelB = modelManager.getModel(shortName);
+
+        //Get the original artifact
+        var originalArtifact = artifactManager.get(id);
+
+        modelA.import('form.importer', context.content);
+        
+        //Validation requires the lifecycle state
+        modelA.set('*.lifecycleState',originalArtifact.lifecycleState);
+
+        var report=modelA.validate();
+
+        //Check if the validation check has failed
+        if((report)&&(report.failed)){
+
+            msg['ok']=false;
+            msg['report']=report;
+            print(msg);
+            return;
+        }
+
+        modelA.set('*.id', id);
+
+        modelB.import('asset', originalArtifact);
+
+        //Checks whether two models are equal
+        var reqProps=['overview.name', 'overview.provider', 'overview.version']
+
+        var isEqual = modelManager.assertEqual(modelA, modelB,reqProps);
+
+        //If they are not equal,abort the operation
+        if (!isEqual) {
+            log.debug('trying to get fields which are different');
             var diff=modelManager.diff(modelA,modelB,reqProps);
             response.sendError(406, 'The name,provider and version of an asset cannot be changed.The following fields'
             +' were modified: '+diff);
             return;
         }
-
+        modelA.set("overview.createdtime",modelB.get("overview.createdtime").value);
         var artifact = modelA.export('asset.exporter');
-        artifactManager.update(artifact);
-        var msg={};
+
+        log.debug('not updating'+artifact);
+        //artifactManager.update(artifact);
+
         msg['ok']=true;
         msg['message']='asset updated';
         print(msg);
@@ -267,27 +322,9 @@ routeManager.register('PUT', 'publisher', '/publisher/api/asset/{type}/{id}', fu
         log.debug('The asset ' + id + ' could not be updated.The following exception was thrown: ' + e);
         response.sendError(404, 'The asset ' + id + ' could not be updated.Please check the server logs.');
     }
-    /*var shortName=context.params.type;
-     var id=context.params.id;
-     var attribute=context.params.attr;
-     var attributeValue=context.params.value;
-     var artifactManager=rxtManager.getArtifactManager(shortName);
-
-     //Obtain the artifact
-     try{
-     var result=artifactManager.update({
-     id:id,
-     attributes: {
-     attribute:attributeValue,
-     overview_type:'default'
-     }
-     });
-     print(result);
-
-     }catch(e){
-     print('unable to update artifact with id'+e);
-     }*/
 });
+
+
 
 routeManager.register('DELETE', 'publisher', '/publisher/api/asset/{type}/{id}', function (context) {
     var shortName = context.params.type;
@@ -312,7 +349,7 @@ var securityModule=require('/modules/security/security.manager.js').securityMana
 var sm=securityModule.cached();
 
 //This will short circuit the handling of the requests
-var passed=sm.check(function(){
+var passed=sm.check(session,function(){
     response.sendError(401);
 
 });
@@ -320,7 +357,7 @@ var passed=sm.check(function(){
 //Stop servicing the request if the check failed
 if(passed){
 
-    var user=require('/modules/user.js');
+    var user=require('store').user;
     var publisher = require('/modules/publisher.js').publisher(request, session);
 
 
@@ -330,11 +367,16 @@ if(passed){
     var dataInjector=publisher.dataInjector;
     var DataInjectorModes=publisher.DataInjectorModes;
     var filterManager=publisher.filterManager;
+    var storageModule = require('/modules/data/storage.js').storageModule();
+    var storageConfig = require('/config/storage.json');
+    var utility = require('/modules/utility.js').rxt_utility();
     var log=new Log();
 
 
 
     routeManager.handle(request, response);
 }
+
+}, request, response, session);
 
 %>

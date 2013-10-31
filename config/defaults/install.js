@@ -12,7 +12,7 @@ var installer = function () {
     var log = new Log('master.installer');
     var utility = require('/modules/utility.js').rxt_utility();
     var carbon = require('carbon');
-    var server = require('/modules/server.js');
+    var server = require('store').server;
     var GovernanceUtils = Packages.org.wso2.carbon.governance.api.util.GovernanceUtils;
     var SUPER_TENANT_ID = -1234;
     var SEARCH_INDEX = 'overview_name';
@@ -88,8 +88,8 @@ var installer = function () {
     function onCreateArtifactManager(context) {
 
         //Create a registry instance
-        var registry = new carbon.registry.Registry(server.server(), {
-            username: 'admin@admin.com',
+        var registry = new carbon.registry.Registry(server.instance(), {
+            username: 'admin',
             tenantId: SUPER_TENANT_ID
         });
 
@@ -100,7 +100,7 @@ var installer = function () {
             //Create a new artifact manager
             var artifactManager = new carbon.registry.ArtifactManager(registry, context.assetType);
         } catch (e) {
-            log.info('unable to create artifactManager of type: ' + context.assetType);
+            log.debug('unable to create artifactManager of type: ' + context.assetType);
             return;
         }
 
@@ -110,7 +110,7 @@ var installer = function () {
         context['registry'] = registry;
         context['userManager'] = userManager;
 
-        log.info('created artifact manager for ' + context.assetType);
+        log.debug('created artifact manager for ' + context.assetType);
     }
 
     /*
@@ -120,7 +120,7 @@ var installer = function () {
     function onSetAssetPermissions(context) {
         var userManager = context.userManager;
 
-        //log.info('anon role: '+carbon.user.anonRole);
+        //log.debug('anon role: '+carbon.user.anonRole);
         log.debug('giving anon role GET rights to ' + context.path);
         userManager.authorizeRole(carbon.user.anonRole, context.path, carbon.registry.actions.GET);
     }
@@ -162,6 +162,27 @@ var installer = function () {
     }
 
     /*
+     adds the asset to Social Cache DB. (this is a hack to warm up the cache,
+     so it want be empty at start up)
+     */
+    function addToSocialCache(asset) {
+        if (asset) {
+            var domain = "carbon.super";
+
+            var CREATE_QUERY = "CREATE TABLE IF NOT EXISTS SOCIAL_CACHE (id VARCHAR(255) NOT NULL,tenant VARCHAR(255),type VARCHAR(255), " +
+                "body VARCHAR(5000), rating DOUBLE,  PRIMARY KEY ( id ))";
+            var server = require('store').server;
+            server.privileged(function () {
+                var db = new Database("SOCIAL_CACHE");
+                db.query(CREATE_QUERY);
+                var combinedId = asset.type + ':' + asset.id;
+                db.query("MERGE INTO SOCIAL_CACHE (id,tenant,type,body,rating) VALUES('" + combinedId + "','" + domain + "','" + asset.type  + "','',0)");
+                db.close();
+            });
+        }
+    }
+
+    /*
      The function is used to add a new asset instance to the registry
      */
     function onAddAsset(context) {
@@ -180,10 +201,13 @@ var installer = function () {
 
         var assets = artifactManager.find(function (adapter) {
             return (adapter.attributes.overview_name == name) ? true : false;
-        }, 1);
+        }, null);
 
         context['currentAsset'] = assets[0] || null;
-        log.debug('added asset: ' + stringify(context.currentAsset));
+        //log.debug('added asset: ' + stringify(context.currentAsset));
+
+        addToSocialCache(context.currentAsset);
+        //log.debug('finished');
     }
 
     /*
@@ -196,12 +220,14 @@ var installer = function () {
 
         //Set the id
         artifact.id = currentAsset.id;
+        //Disable createdtime update of a default asset
+        artifact.attributes.overview_createdtime = currentAsset.attributes.overview_createdtime;
 
         //Store any resources in the Storage Manager
         context.dataInjector.inject(artifact, context.dataInjectorModes.STORAGE);
 
         artifactManager.update(artifact);
-        //log.info('finished updating the artifact : '+currentAsset.name);
+        //log.debug('finished updating the artifact : '+currentAsset.name);
     }
 
     /*
@@ -213,6 +239,8 @@ var installer = function () {
         var currentLifeCycleName = currentAsset.lifecycle || null;
         var currentLifeCycleState = currentAsset.lifecycleState || null;
         var attempts = 0;
+
+        log.debug('attaching lifecycle to: '+currentAsset.attributes.overview_name);
 
         log.debug('current lifecycle: ' + currentLifeCycleName + ' , current state: ' + currentLifeCycleState);
 
@@ -248,6 +276,8 @@ var installer = function () {
 
             log.debug('current lifecycle state: ' + currentLifeCycleState);
         }
+
+        log.debug('final state of : '+currentAsset.attributes.overview_name+' '+currentLifeCycleState);
     }
 
     /*

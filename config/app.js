@@ -33,11 +33,11 @@ process.setProperty('http.port', httpPort.toString());
 process.setProperty('https.port', httpsPort.toString());
 
 var pubConfig = require('/config/publisher.js').config();
-var server = require('/modules/server.js');
-server.init(pubConfig);
 
-var user = require('/modules/user.js');
-user.init(pubConfig);
+var mod = require('store');
+
+mod.server.init(pubConfig);
+mod.user.init(pubConfig);
 
 var publisher = require('/modules/publisher.js');
 publisher.init(pubConfig);
@@ -56,16 +56,21 @@ caramel.configs({
     negotiation: true,
     themer: function () {
         //TODO: Hardcoded theme
-        return 'mobileapp';
+        return 'default';
     }
 
 });
 
+//startup log for url
+var logPublisherUrl = function () {
+	var log = new Log();
+    log.info("Publisher URL : " + config.server.http + caramel.configs().context);
+};
 
 //Cause the super tenant to be load
 var SUPER_TENANT = -1234;
-var event = require('/modules/event.js');
+var event = require('event');
 event.emit('tenantLoad', SUPER_TENANT);
 
-
+setTimeout(logPublisherUrl, 7000);
 

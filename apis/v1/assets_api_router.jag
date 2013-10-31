@@ -1,5 +1,7 @@
 <%
 
+require('/modules/publisher.js').exec(function(ctx) {
+
 var config = require('/config/publisher.json');
 var caramel = require('caramel');
 
@@ -11,8 +13,10 @@ var log = new Log();
 
 routeManager.register('POST', 'publisher', '/publisher/api/assets/{operation}/{type}/', function (context) {
     var type = context.params.type;
-
-    var username = require('/modules/user.js').current(session).username;
+    
+	var server  = require('store').server;
+    var username = server.current(session).username;
+    var tenantId = server.current(session).tenantId;
     var startDate = context.post.startDate;
     var endDate = context.post.endDate;
 
@@ -31,15 +35,16 @@ routeManager.register('POST', 'publisher', '/publisher/api/assets/{operation}/{t
 
     if (!context.post.isOnChoice) {
 
-        var bookmarkStats = stats.filterResultsByAssetType(stats.getBookmarkStats(username), type);
+        var bookmarkStats = stats.filterResultsByAssetType(stats.getBookmarkStats(username,tenantId), type);
         var bookmarkTicks = [], bookmarkStatData = [], assetName;
         for (var i = 0; i < bookmarkStats.length; i++) {
             artifact = artifactManager.get(bookmarkStats[i].ASSET_ID);
             model.import('asset', artifact);
             assetName = (model.get('overview.name')).value;
+            assetVersion = (model.get('overview.version')).value;
             bookmarkStatData.push([i, parseInt(bookmarkStats[i]['NO_OF_BOOKMARKS'])]);
             bookmarkStats[i]['ASSET_ID'] = assetName;
-            bookmarkTicks.push([i, assetName]);
+            bookmarkTicks.push([i, assetName+'-'+assetVersion]);
 
         }
 
@@ -47,15 +52,16 @@ routeManager.register('POST', 'publisher', '/publisher/api/assets/{operation}/{t
         output['bookmarkTicks'] = bookmarkTicks;
     }
 
-    var hotAssetsStats = stats.filterResultsByAssetType(stats.getHotAssetStats(startDate,endDate), type);
+    var hotAssetsStats = stats.filterResultsByAssetType(stats.getHotAssetStats(startDate,endDate,tenantId), type);
     var hotAssetticks = [], hotstAssetData = [], hotAssetName;
     for (var j = 0; j < hotAssetsStats.length; j++) {
         artifact = artifactManager.get(hotAssetsStats[j].ASSET_ID);
         model.import('asset', artifact);
         hotAssetName = (model.get('overview.name')).value;
+        hotAssetVersion = (model.get('overview.version')).value;
         hotstAssetData.push([j, parseInt(hotAssetsStats[j]['NO_OF_BOOKMARKS'])]);
         hotAssetsStats[j]['ASSET_ID'] = hotAssetName;
-        hotAssetticks.push([j, hotAssetName]);
+        hotAssetticks.push([j, hotAssetName+'-'+hotAssetVersion]);
 
     }
 
@@ -70,14 +76,14 @@ var securityModule=require('/modules/security/security.manager.js').securityMana
 var sm=securityModule.cached();
 
 //This will short circuit the handling of the requests
-var passed=sm.check(function(){
+var passed=sm.check(session,function(){
     response.sendError(401);
 });
 
 //Stop servicing the request if the check failed
 if(passed){
 
-    var user = require('/modules/user.js');
+    var user = require('store').user;
     var publisher = require('/modules/publisher.js').publisher(request, session);
     var stats = require('/modules/statistics.js');
 
@@ -88,4 +94,5 @@ if(passed){
     routeManager.handle(request, response);
 }
 
+}, request, response, session);
 %>

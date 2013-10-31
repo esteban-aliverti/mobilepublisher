@@ -6,21 +6,33 @@ var utility=require('/modules/utility.js').rxt_utility();
 var SUPER_TENANT=-1234;
 
 var init = function (options) {
-    var event = require('/modules/event.js');
+    var event = require('event');
 
     event.on('tenantCreate', function (tenantId) {
-        var carbon = require('carbon'),
+        var role, roles,
+            carbon = require('carbon'),
+            mod = require('store'),
+            server = mod.server,
             config = require('/config/publisher-tenant.json'),
-            server = require('/modules/server.js'),
             system = server.systemRegistry(tenantId),
             um = server.userManager(tenantId),
             CommonUtil = Packages.org.wso2.carbon.governance.registry.extensions.utils.CommonUtil,
             GovernanceConstants = org.wso2.carbon.governance.api.util.GovernanceConstants;
 
-        system.put(PUBLISHER_CONFIG_PATH, {
+        system.put(options.tenantConfigs, {
             content: JSON.stringify(config),
             mediaType: 'application/json'
         });
+        roles = config.roles;
+        for (role in roles) {
+            if (roles.hasOwnProperty(role)) {
+                if (um.roleExists(role)) {
+                    um.authorizeRole(role, roles[role]);
+                } else {
+                    um.addRole(role, [], roles[role]);
+                }
+            }
+        }
 
         CommonUtil.addRxtConfigs(system.registry.getChrootedRegistry("/_system/governance"), tenantId);
         um.authorizeRole(carbon.user.anonRole, GovernanceConstants.RXT_CONFIGS_PATH, carbon.registry.actions.GET);
@@ -29,8 +41,8 @@ var init = function (options) {
     });
 
     event.on('tenantLoad', function (tenantId) {
-        var user = require('/modules/user.js'),
-            server = require('/modules/server.js'),
+        var store = require('store'),
+            server = store.server,
             carbon = require('carbon'),
             config = server.configs(tenantId);
         var reg = server.systemRegistry(tenantId);
@@ -38,19 +50,9 @@ var init = function (options) {
         var GovernanceConstants = org.wso2.carbon.governance.api.util.GovernanceConstants;
         var um = server.userManager(tenantId);
         var publisherConfig=require('/config/publisher-tenant.json');
-        var securityProviderModule=require('/modules/security/storage.security.provider.js').securityModule();
 
-        var securityProvider=securityProviderModule.cached();
-
-        //The security provider requires the registry and user manager to work
-        securityProvider.provideContext(reg,um);
-
-        //check whether tenantCreate has been called
-        if (!reg.exists(PUBLISHER_CONFIG_PATH)) {
-            event.emit('tenantCreate', tenantId);
-        }
-
-        config[user.USER_OPTIONS] = configs(tenantId);
+        //Load the tag dependencies
+        loadTagDependencies(reg);
 
         //Check if the tenant is the super tenant
         if(tenantId==SUPER_TENANT){
@@ -68,7 +70,7 @@ var init = function (options) {
             //Attempt to load the default assets
             var deployer = require('/modules/asset.deployment.js').deployment_logic();
 
-            log.info('starting auto deployment of default assets.');
+            log.debug('starting auto deployment of default assets.');
 
             //Create a deployment manager instance
             var deploymentManager = new deployer.Deployer({
@@ -81,7 +83,7 @@ var init = function (options) {
 
             deploymentManager.autoDeploy();
 
-            log.info('finished auto deployment of default assets.');
+            log.debug('finished auto deployment of default assets.');
         }
 
 
@@ -95,7 +97,7 @@ var init = function (options) {
 };
 
 var configs = function (tenantId) {
-    var server = require('/modules/server.js'),
+    var server = require('store').server,
         registry = server.systemRegistry(tenantId);
     return JSON.parse(registry.content(PUBLISHER_CONFIG_PATH));
 };
@@ -136,12 +138,9 @@ var addLifecycles = function (registry) {
 };
 
 var publisher = function (o, session) {
-    var publisher, tenantId,
-        user = require('/modules/user.js'),
-        server = require('/modules/server.js');
-
+    var publisher, tenantId, store,
+        server = require('store').server;
     tenantId = (o instanceof Request) ? server.tenant(o, session).tenantId : o;
-
     publisher = session.get(TENANT_PUBLISHER);
     if (publisher) {
         return publisher;
@@ -152,8 +151,9 @@ var publisher = function (o, session) {
 };
 
 var Publisher = function (tenantId, session) {
-    var server = require('/modules/server.js'),
-        user = require('/modules/user.js'),
+    var store = require('store'),
+        server = store.server,
+        user = store.user,
         managers = buildManagers(tenantId, user.userRegistry(session));
     this.tenantId = tenantId;
     this.modelManager = managers.modelManager;
@@ -162,6 +162,7 @@ var Publisher = function (tenantId, session) {
     this.dataInjector=managers.dataInjector;
     this.DataInjectorModes=managers.DataInjectorModes;
     this.filterManager=managers.filterManager;
+    this.storageSecurityProvider=managers.storageSecurityProvider;
 
 };
 /*
@@ -175,14 +176,25 @@ var buildManagers = function (tenantId, registry) {
     var ext_domain = require('/modules/ext/core/extension.domain.js').extension_domain();
     var ext_core = require('/modules/ext/core/extension.core.js').extension_core();
     var ext_mng = require('/modules/ext/core/extension.management.js').extension_management();
+    var validationManagement=require('/modules/validations/validation.manager.js').validationManagement();
     var rxt_management = require('/modules/rxt.manager.js').rxt_management();
     var route_management = require('/modules/router-g.js').router();
     var dataInjectorModule=require('/modules/data/data.injector.js').dataInjectorModule();
     var filterManagementModule=require('/modules/filter.manager.js').filterManagementModule();
-
-    var filterManager=new filterManagementModule.FilterManager();
-    var server=require('/modules/server.js');
+    var securityProviderModule=require('/modules/security/storage.security.provider.js').securityModule();
+    var server=require('store').server;
     var userManager=server.userManager(tenantId);
+    var storageSecurityProvider=new securityProviderModule.SecurityProvider();
+    var filterManager=new filterManagementModule.FilterManager();
+
+
+    log.debug('tenant: '+tenantId);
+
+    //The security provider requires the registry and user manager to work
+    storageSecurityProvider.provideContext(registry,userManager);
+
+    log.debug(userManager);
+
     filterManager.setContext(userManager);
 
     var dataInjector=new dataInjectorModule.DataInjector();
@@ -197,7 +209,7 @@ var buildManagers = function (tenantId, registry) {
     var rxtManager = new rxt_management.RxtManager(registry);
     var routeManager = new route_management.Router();
 
-    var server = require('/modules/server.js');
+    var server = require('store').server;
     var conf = configs(tenantId);
     var config = server.configs(tenantId);
 
@@ -228,7 +240,10 @@ var buildManagers = function (tenantId, registry) {
     var actionManager = new ext_core.ActionManager({templates: parser.templates});
     actionManager.init();
 
-    var modelManager = new ext_mng.ModelManager({parser: parser, adapterManager: adapterManager, actionManager: actionManager, rxtManager: rxtManager});
+    var validationManager=new validationManagement.ValidationManager();
+
+    var modelManager = new ext_mng.ModelManager({parser: parser, adapterManager: adapterManager,
+        actionManager: actionManager, rxtManager: rxtManager ,validationManager:validationManager});
 
     return {
         modelManager: modelManager,
@@ -236,8 +251,38 @@ var buildManagers = function (tenantId, registry) {
         routeManager: routeManager,
         dataInjector:dataInjector,
         DataInjectorModes:injectorModes,
-        filterManager:filterManager
+        filterManager:filterManager,
+        storageSecurityProvider:storageSecurityProvider
     };
+};
+
+/*
+The function is used to load tag dependencies
+ */
+var loadTagDependencies=function(registry){
+
+    var TAGS_QUERY='SELECT RT.REG_TAG_ID FROM REG_RESOURCE_TAG RT ORDER BY RT.REG_TAG_ID';
+    var TAGS_QUERY_PATH='/_system/config/repository/components/org.wso2.carbon.registry/queries/allTags';
+
+    //Check if the tag path exists
+    var resource=registry.get(TAGS_QUERY_PATH);
+
+    //Check if the tag is present
+    if(!resource){
+
+        log.debug('tag query path does not exist.');
+
+        registry.put(TAGS_QUERY_PATH, {
+            content: TAGS_QUERY,
+            mediaType: 'application/vnd.sql.query',
+            properties: {
+                resultType: 'Tags'
+            }
+        });
+
+        log.debug('tag query has been added.');
+    }
+
 };
 
 /*
@@ -248,13 +293,15 @@ var buildManagers = function (tenantId, registry) {
  @username: The username of the account to which the permissions will be attached
  @permissions: An object of permissions which will be assigned to the newly created user role
  */
-var buildPermissionsList = function (tenantId, username, permissions, server) {
+var buildPermissionsList = function (tenantId, username, permissions) {
     var log = new Log();
-    log.info('Entered buildPermissionsList');
-    var server = require('/modules/server.js');
+    log.debug('Entered buildPermissionsList');
+    var store = require('store');
+    var server = store.server;
+    var user = store.user;
     //Obtain the accessible collections
-    var accessible = server.options(tenantId).userSpace.accessible;
-    log.info(stringify(accessible));
+    var accessible = user.configs(tenantId).accessible;
+    log.debug(stringify(accessible));
 
     var id;
     var accessibleContext;
@@ -278,12 +325,9 @@ var buildPermissionsList = function (tenantId, username, permissions, server) {
         for (var colIndex in accessibleCollections) {
 
             collection = accessibleCollections[colIndex];
-			var indexUsername = username;
-			if(indexUsername.indexOf('@') !== -1){
-				indexUsername = indexUsername.replace('@', ':');
-			}
+
             //Create the id used for the permissions
-            id = context + '/' + collection + '/' + indexUsername;
+            id = context + '/' + collection + '/' + username;
 
 
             //Check if a collection exists
@@ -291,7 +335,7 @@ var buildPermissionsList = function (tenantId, username, permissions, server) {
 
             //Only add permissions if the path  does not exist
             if (col == undefined) {
-                log.info('collection: ' + id + ' does not exist.');
+                log.debug('collection: ' + id + ' does not exist.');
                 //Assign the actions to the id
                 permissions[id] = actions;
 
@@ -307,7 +351,7 @@ var buildPermissionsList = function (tenantId, username, permissions, server) {
                 });
             }
             else {
-                log.info('collection: ' + id + 'is present.');
+                log.debug('collection: ' + id + 'is present.');
             }
         }
 
@@ -331,8 +375,9 @@ var configureUser = function (tenantId, user) {
         return;
     }
 
-    var server = require('/modules/server.js');
-    var umod = require('/modules/user.js');
+    var store = require('store');
+    var server = store.server;
+    var umod = store.user;
     var um = server.userManager(tenantId);
     var config = configs(tenantId);
     var user = um.getUser(user.username);
@@ -341,7 +386,7 @@ var configureUser = function (tenantId, user) {
     var defaultRoles = config.userRoles;
     var log = new Log();
 
-    log.info('Starting configuringUser.');
+    log.debug('Starting configuringUser.');
 
     //Create the permissions in the options configuration file
     perms = buildPermissionsList(tenantId, user.username, perms, server);
@@ -350,14 +395,14 @@ var configureUser = function (tenantId, user) {
 
     if (!checkIfEmpty(perms)) {
 
-        //log.info('length: '+perms.length);
+        //log.debug('length: '+perms.length);
 
         //Register the role
         //We assume that the private_role is already present
         //TODO: This needs to be replaced.
         um.authorizeRole(role, perms);
 
-        //log.info('after add role');
+        //log.debug('after add role');
 
         //user.addRoles(role);
     }
@@ -372,4 +417,38 @@ var checkIfEmpty = function (object) {
     }
 
     return true;
+};
+
+var exec = function (fn, request, response, session) {
+    var es = require('store'),
+        carbon = require('carbon'),
+        tenant = es.server.tenant(request, session),
+        user = es.server.current(session);
+    if(!user) {
+        response.sendError(401, 'Unauthorized');
+        return;
+    }
+    es.server.sandbox({
+        tenantId: tenant.tenantId,
+        username: user.username
+    }, function () {
+        //var configs = require('/config/publisher.js').config();
+        return fn.call(null, {
+            //tenant: tenant,
+            //server: es.server,
+            //usr: es.user,
+            //user: user,
+            //publisher: require('/modules/publisher.js').publisher(tenant.tenantId, session),
+            //configs: configs,
+            request: request,
+            response: response,
+            session: session,
+            application: application
+            //event: require('/modules/event.js'),
+            //params: request.getAllParameters(),
+            //files: request.getAllFiles(),
+            //matcher: new URIMatcher(request.getRequestURI()),
+            //log: new Log(request.getMappedPath())
+        });
+    });
 };

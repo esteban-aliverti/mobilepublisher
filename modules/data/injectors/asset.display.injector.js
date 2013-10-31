@@ -74,12 +74,6 @@ var injector = function () {
 
                 uuid=getUUID(url);
 
-				var artifactManager=rxtManager.getArtifactManager(object.type);
-
-		        var artifact=artifactManager.get(object.id);
-		        var actions=artifactManager.availableActions(artifact);
-				
-				object['lifecycleAvailableActions'] = actions;
                 //Check if it is a valid uuid and create a new url
                 if((uuid)&&(utility.isValidUuid(uuid))){
                     log.debug('creating a new url for '+url);
@@ -89,7 +83,7 @@ var injector = function () {
             });
         }
 
-        //log.info(object);
+        //log.debug(object);
 
         return true;
     }

@@ -32,14 +32,17 @@ var module=function(){
                 log.debug('Ignoring field: '+stringify(fieldTemplate));
 				return;
 			}
+			//Ignore the field which is set as hidden
+			if(fieldTemplate.meta.hidden == "false"){
 			var data={};
 
-			data['name']=table.name.toLowerCase()+'_'+field.name.toLowerCase();
+			data['name']=table.name+'_'+field.name;
 			data['label']=(fieldTemplate.label)?fieldTemplate.label:field.name;
 			data['isRequired']=(fieldTemplate.required)?true:false;
 			data['isTextBox']=(fieldTemplate.type=='text')?true:false;
 			data['isTextArea']=(fieldTemplate.type=='text-area')?true:false;
 			data['isOptions']=(fieldTemplate.type=='options')?true:false;
+            data['isOptionsText']=(fieldTemplate.type=='option-text')?true:false;
 
             data['isReadOnly']=(fieldTemplate.meta.readOnly)?fieldTemplate.meta.readOnly:false;
             data['isEditable']=(fieldTemplate.meta.editable)?fieldTemplate.meta.editable:false;
@@ -50,6 +53,8 @@ var module=function(){
 			data['valueList']=csvToArray(fieldTemplate.value||'');
 			
 			fieldArray.push(data);
+			}
+
 		}
 
 		return fieldArray;
@@ -62,7 +67,7 @@ var module=function(){
 
         var username='unknown';
         try{
-            username=require('/modules/user.js').current(session).username;//.get('LOGGED_IN_USER');
+            username=require('store').server.current(session).username;//.get('LOGGED_IN_USER');
         }
         catch(e){
             log.debug('Unable to retrieved logged in user from sessions.The following exception was thrown: '+e);

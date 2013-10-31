@@ -21,6 +21,8 @@
  Created Date: 6/8/2013
  */
 
+require('/modules/publisher.js').exec(function(ctx) {
+
 var config = require('/config/publisher.json');
 var caramel = require('caramel');
 
@@ -180,11 +182,37 @@ routeManager.register('PUT', 'publisher', '/publisher/api/lifecycle/{action}/{ty
 
 });
 
+/*
+ The function returns the lifecycle structure of a given asset
+ */
+function obtainLifeCycle(type){
+    CommonUtil = Packages.org.wso2.carbon.governance.lcm.util.CommonUtil;
+    var rootReg=rxtManager.registry.registry;
+    var configReg = rootReg.getChrootedRegistry('/_system/config');
+
+    //Obtain a model of the type
+    var model=modelManager.getModel(type);
+
+    var lifecycle=model.get('*.lifeCycle').value;
+
+    var data=CommonUtil.getLifecycleConfiguration(lifecycle,configReg);
+
+    //Convert to an xml
+    data='<?xml version="1.0" encoding="ISO-8859-1"?>'+data;
+    var xml=new XML(data);
+
+    //Convert to a json
+    data=data.replace('<?xml version="1.0" encoding="ISO-8859-1"?>','');
+    var lcJSON=utility.xml.convertE4XtoJSON(xml);
+
+    return lcJSON;
+}
+
 routeManager.register('GET','publisher','/publisher/api/lifecycle/{type}/{id}',function(context){
 
 
     try{
-        log.debug('Entered check lifecycle/type/id ');
+
         var shortName=context.params.type;
         var id=context.params.id;
 
@@ -193,10 +221,18 @@ routeManager.register('GET','publisher','/publisher/api/lifecycle/{type}/{id}',f
         var artifact=artifactManager.get(id);
         var state=artifactManager.getLifecycleState(artifact);
         var actions=artifactManager.availableActions(artifact);
+
+
+        var lcJSON=obtainLifeCycle(shortName);
+
+
         var msg={};
         msg['status']='ok';
         msg['state']=state;
         msg['actions']=actions;
+        msg['lifecycle']=lcJSON;
+
+
         log.debug(msg);
         print(msg);
     }
@@ -207,7 +243,7 @@ routeManager.register('GET','publisher','/publisher/api/lifecycle/{type}/{id}',f
 });
 
 routeManager.register('GET','publisher','/publisher/api/lifecycle/checklist/{type}/{id}',function(context){
-   //log.info('short name: '+context.params.type);
+   //log.debug('short name: '+context.params.type);
 
    try{
        log.debug('Entered check list/type/id ');
@@ -266,23 +302,14 @@ routeManager.register('GET','publisher','/publisher/api/lifecycle/information/hi
        var artifactManager=rxtManager.getArtifactManager(shortName);
        var artifact=artifactManager.get(id);
 
-       var historyPath=artifactManager.getLifecycleHistoryPath(artifact);
 
-       log.debug('history retrieved from '+historyPath);
-
-       var systemRegistry=server.systemRegistry();
-
-       //var actions=artifactManager.availableActions(artifact);
-
-       //log.debug(actions);
-
-       var resourceInstance=systemRegistry.get(historyPath);
+       var historyRes=artifactManager.getLifecycleHistory(artifact);
 
        var json={};
 
-       if(resourceInstance!=undefined){
+       if(historyRes!=undefined){
 
-           var xml=new XML(resourceInstance.content);
+           var xml=new XML(historyRes.content);
 
            json=utility.xml.convertE4XtoJSON(xml);
 
@@ -301,21 +328,24 @@ var securityModule=require('/modules/security/security.manager.js').securityMana
 var sm=securityModule.cached();
 
 //This will short circuit the handling of the requests
-var passed=sm.check(function(){
+var passed=sm.check(session,function(){
     response.sendError(401);
 });
 
 //Stop servicing the request if the check failed
 if(passed){
-    var user = require('/modules/user.js');
+    var store = require('store');
+    var user = store.user;
     var utility=require('/modules/utility.js').rxt_utility();
-    var server=require('/modules/server.js');
+    var server=store.server;
 
     var publisher = require('/modules/publisher.js').publisher(request, session);
     var rxtManager = publisher.rxtManager;
+    var modelManager=publisher.modelManager;
 
     routeManager.handle(request, response);
 }
 
+}, request, response, session);
 
 %>

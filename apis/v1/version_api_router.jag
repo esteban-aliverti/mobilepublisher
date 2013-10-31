@@ -9,6 +9,8 @@ Filename: version_api_router.jag
 Created Date: 18/8/2013
 */
 
+require('/modules/publisher.js').exec(function(ctx) {
+
 var config = require('/config/publisher.json');
 var caramel = require('caramel');
 var utility = require('/modules/utility.js').rxt_utility();
@@ -22,7 +24,7 @@ routeManager.register('GET','publisher','/publisher/api/version/{type}/{id}',fun
     var shortName=context.params.type;
     var id=context.params.id;
 
-    log.info('type: '+shortName+' id: '+id);
+    log.debug('type: '+shortName+' id: '+id);
 
     try{
 
@@ -41,7 +43,7 @@ routeManager.register('GET','publisher','/publisher/api/version/{type}/{id}',fun
         }
 
     }catch(e){
-        log.info('Unable to obtain the version list of asset : '+id+'.The following exception was thrown: '+e);
+        log.debug('Unable to obtain the version list of asset : '+id+'.The following exception was thrown: '+e);
         response.sendError(500,'Unable to obtain the version list of asset : '+id+'.Please check server log');
     }
 
@@ -53,7 +55,7 @@ routeManager.register('POST','publisher','/publisher/api/version/{type}/{id}/{ve
     var id=context.params.id;
     var version=context.params.version;
 
-    //log.info('type: '+shortName+' id: '+id+' version: '+version);
+    //log.debug('type: '+shortName+' id: '+id+' version: '+version);
 
     try{
 
@@ -69,7 +71,7 @@ routeManager.register('POST','publisher','/publisher/api/version/{type}/{id}/{ve
 
         //Do not create a new version if it already exists
         if(foundAsset){
-            log.info('a duplicate version exists');
+            log.debug('a duplicate version exists');
             response.sendError(406,'The version : '+version+' already exists for asset: '+id);
             return;
         }
@@ -79,7 +81,7 @@ routeManager.register('POST','publisher','/publisher/api/version/{type}/{id}/{ve
         //Import the artifact data
         model.import('asset',oldArtifact);
 
-        //log.info(oldArtifact);
+        //log.debug(oldArtifact);
 
         //Delete the id
         model.set('*.id','');
@@ -101,7 +103,7 @@ routeManager.register('POST','publisher','/publisher/api/version/{type}/{id}/{ve
 
     }catch(e){
 
-        log.info('Unable to create a new version of the '+type+' '+id+' version: '+version+'Please'
+        log.debug('Unable to create a new version of the '+type+' '+id+' version: '+version+'Please'
                 +' refer to the server logs for details.The following exception was throw: '+e);
 
         response.sendError(500,'Unable to create a new version of the '+type+' '+id+' version: '+version+'Please'
@@ -114,14 +116,14 @@ var securityModule=require('/modules/security/security.manager.js').securityMana
 var sm=securityModule.cached();
 
 //This will short circuit the handling of the requests
-var passed=sm.check(function(){
+var passed=sm.check(session,function(){
     response.sendError(401);
 });
 
 //Stop servicing the request if the check failed
 if(passed){
 
-    var user=require('/modules/user.js');
+    var user=require('store').user;
     var publisher = require('/modules/publisher.js').publisher(request, session);
 
     var rxtManager = publisher.rxtManager;
@@ -130,4 +132,5 @@ if(passed){
     routeManager.handle(request,response);
 }
 
+}, request, response, session);
 %>

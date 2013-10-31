@@ -5,7 +5,6 @@
 */
 var render=function(theme,data,meta,require){
     //var _url = "/publisher/asset/"  + data.meta.shortName + "/" + data.info.id + "/edit"
-
 	var listPartial='view-asset';
 	//Determine what view to show
 	switch(data.op){
@@ -17,6 +16,7 @@ var render=function(theme,data,meta,require){
 		break;
     case 'edit':
         listPartial='edit-asset';
+        data = require('/helpers/edit-asset.js').selectCategory(data);
         break;
     case 'lifecycle':
         listPartial='lifecycle-asset';

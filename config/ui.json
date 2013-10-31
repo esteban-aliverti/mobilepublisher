@@ -1,13 +1,12 @@
 {
     "assets":{
 
-        "ignore":["ebook", "site", "gadget"],
+        "ignore":[],
         "icons":{
-            "gadget":"icon-dashboard",
+            "gadget":"icon-cog",
             "ebook" :"icon-ebook",
             "site" :"icon-site",
-            "default":"icon-dashboard",
-            "mobileapp" :"icon-mobile-phone",
+            "default":"icon-asterisk"
         }
     }
 }

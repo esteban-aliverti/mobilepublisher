@@ -20,13 +20,13 @@ var securityModule = function () {
     var CONFIG_FORMAT = 'json';
     var ROLE_ADMIN='admin';
     var ROLE_ANON='anon';
+    var CONFIG_PATH='/config/ext';
 
-
-    function SecurityProvider(context) {
+    function SecurityProvider() {
         this.storageBlocks = {};
-        this.context = context;
+        this.context = {path:CONFIG_PATH};
 
-        this.bundleManager = new bundler.BundleManager({path: context.path});
+        this.bundleManager = new bundler.BundleManager({path: CONFIG_PATH});
         this.registry=null;
         this.um=null;
     }
@@ -70,7 +70,7 @@ var securityModule = function () {
     /*
     The function hand
      */
-    SecurityProvider.prototype.execute=function(assetType,assetId,uuid){
+    SecurityProvider.prototype.execute=function(assetType,assetId,uuid,session){
 
         //Load the governance artifacts
         GovernanceUtils.loadGovernanceArtifacts(this.registry.registry);
@@ -82,19 +82,19 @@ var securityModule = function () {
         var asset=artifactManager.get(assetId);
 
         //Obtain the signed in user
-        var user=session.get(LOGGED_IN_USER);
+        var userInstance=require('store').server.current(session);
 
         var roles=[];
-
+        var username = null;
         //If a user is not logged in they will recieve anon rights
-        if(!user){
+        if(!userInstance){
             log.debug('a user is not logged in.');
             roles.push(ROLE_ANON);
         }
         else{
             //Obtain the roles
-            var userInstance=this.um.getUser(user);
             roles=userInstance.getRoles();
+            username = userInstance.username;
         }
 
         //Obtain the field name
@@ -105,7 +105,7 @@ var securityModule = function () {
             return false;
         }
 
-        var isAllowed=this.isAllowed(asset,user,roles,asset.lifecycleState,field);
+        var isAllowed=this.isAllowed(asset,username,roles,asset.lifecycleState,field);
 
         return isAllowed;
     };
@@ -249,7 +249,7 @@ var securityModule = function () {
           var instance=application.get(CACHE_STORAGE_SECURITY_PROVIDER);
 
         if(!instance){
-            instance=new SecurityProvider({path:'/config/ext'});
+            instance=new SecurityProvider();
             instance.init();
             application.put(CACHE_STORAGE_SECURITY_PROVIDER,instance);
         }

@@ -74,7 +74,7 @@ var filterManagementModule = function () {
      @data: The data to be filtered
      @return: A filtered array of data
      */
-    FilterManager.prototype.filter = function (data) {
+    FilterManager.prototype.filter = function (data,session) {
 
         var filter;
         var context = {};
@@ -90,12 +90,11 @@ var filterManagementModule = function () {
             isObject = false;
         }
 
-        var username = session.get(LOGGED_IN_USER);
-        var user = this.um.getUser(username);
+        var user = require('store').server.current(session);
 
         context['data'] = getData(data);
         context['roles'] = user.getRoles();
-        context['username'] = username;
+        context['username'] = user.username;
 
         //Obtain the configuration
         assetType = getConfigType(context['data']);
