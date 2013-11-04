@@ -4,7 +4,15 @@ var TENANT_PUBLISHER = 'tenant.publisher';
 var log=new Log('modules.publisher');
 var utility=require('/modules/utility.js').rxt_utility();
 var SUPER_TENANT=-1234;
+var cleanUsername = function (username) {
+    /**
+     * this is a one-way hash function, @ is replaced if the user name is an email
+     * if the user name is coming from a secondery user store it will be second.com/user hence
+     * "/" will be replaced.
+     */
 
+    return username.replace('@', ':').replace('/', ':');
+};
 var init = function (options) {
     var event = require('event');
 
@@ -327,7 +335,7 @@ var buildPermissionsList = function (tenantId, username, permissions) {
             collection = accessibleCollections[colIndex];
 
             //Create the id used for the permissions
-            id = context + '/' + collection + '/' + username;
+            id = context + '/' + collection + '/' + cleanUsername(username);
 
 
             //Check if a collection exists

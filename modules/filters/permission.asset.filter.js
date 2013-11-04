@@ -64,7 +64,7 @@ var filterModule = function () {
 
                 //Check if we have common roles
                 if (commonRoles.length > 0) {
-
+log.info('adding asset'+stringify(item));
                     items.push(item);
                 }
             }

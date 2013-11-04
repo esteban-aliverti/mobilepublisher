@@ -113,7 +113,7 @@ var module=function(){
             log.debug('Setting id of model to '+id);
 
             //adding asset to social
-            addToSocialCache(id,template.shortName);
+            //addToSocialCache(id,template.shortName);
 
             //Save the id data to the model
             model.setField('*.id',id);
