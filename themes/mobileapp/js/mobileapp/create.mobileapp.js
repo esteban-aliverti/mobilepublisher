@@ -109,7 +109,8 @@ $(document).ready(function(){
                //	if(data.ok){
                		
                //	}
-               window.location.replace("/publisher/assets/mobileapp");
+              
+               window.location.replace("/publisher/assets/mobileapp/");
             }); 
         });
 	

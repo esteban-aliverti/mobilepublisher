@@ -1337,4 +1337,18 @@ color:#229A55;
   *background-color: #DA4F49;
 }
 
-
+.text-green {
+    color: #74B749;
+}
+.text-orange {
+    color: #ED6D49;
+}
+.text-blue {
+    color: #0DAED3;
+}
+.text-yellow {
+    color: #FFB400;
+}
+.text-red {
+    color: #F63131;
+}
