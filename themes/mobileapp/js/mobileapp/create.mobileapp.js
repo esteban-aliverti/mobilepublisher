@@ -101,6 +101,17 @@ $('#modal-upload-app').on('shown', function() {
 $(document).ready(function(){
 	// $("#app-upload-progress").css("display", "block");
 	 //$("#app-upload-progress-done").css("display", "none");
+	 
+	    $(document).ready(function() { 
+            // bind 'myForm' and provide a simple callback function 
+            $('#form-asset-create').ajaxForm(function(data) { 
+               //	var data = JSON.parse(data);
+               //	if(data.ok){
+               		
+               //	}
+               alert(data);
+            }); 
+        });
 	
 
 	$('#txtAppUpload').fileuploadFile({

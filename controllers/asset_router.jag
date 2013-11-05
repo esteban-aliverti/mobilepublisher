@@ -4,7 +4,7 @@
 	Filename:asset_routers.js
 	Created Date: 31/7/2013
 	*/
-
+	var caramel;
 	(function(){
 		var config=require('/config/publisher.json');
 

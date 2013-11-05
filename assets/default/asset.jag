@@ -15,7 +15,7 @@
 require('/modules/publisher.js').exec(function(ctx) {
 
 var config = require('/config/publisher.json');
-var caramel = require('caramel');
+caramel = require('caramel');
 var server = require('store').server;
 var utility = require('/modules/utility.js').rxt_utility();
 var assetCachingModule=require('/modules/cache/cache.manager.js').assetCachingModule();
