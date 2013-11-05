@@ -33,6 +33,10 @@ var validatorModule = function () {
         var model = context.model;
         var report=context.report;
 
+
+		log.info('template: '+stringify(template));
+		
+		
         //Go through each field and check if it is mandatory
         for (var index in template.tables) {
 

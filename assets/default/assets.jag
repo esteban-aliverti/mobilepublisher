@@ -82,6 +82,7 @@ routeMnger.register('GET', 'publisher', '/publisher/assets/{type}/', function(co
 		caramel.render({
 			op : 'list',
 			cuser : server.current(session),
+			roles : server.current(session).getRoles(),
 			shortName : type,
 			artifacts : artifacts,
 			query : query,
