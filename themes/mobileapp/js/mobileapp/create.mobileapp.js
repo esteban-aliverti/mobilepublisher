@@ -109,7 +109,7 @@ $(document).ready(function(){
                //	if(data.ok){
                		
                //	}
-               alert(data);
+               window.location.replace("/publisher/assets/mobileapp");
             }); 
         });
 	

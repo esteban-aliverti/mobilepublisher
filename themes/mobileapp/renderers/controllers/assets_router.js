@@ -5,6 +5,30 @@
  */
 
 var render = function (theme, data, meta, require) {
+	
+	
+	
+	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Approve": "btn-blue", "Reject": "btn-danger"};
+	
+	if(data.artifacts){
+		
+		for(var i = 0; i < data.artifacts.length; i++){	
+		var lifecycleAvailableActionsButtons = new Array();
+		for(var j = 0; j < data.artifacts[i].lifecycleAvailableActions.length; j++){	
+			var name = data.artifacts[i].lifecycleAvailableActions[j];		
+			lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});			
+		}
+		
+		data.artifacts[i].lifecycleAvailableActions = lifecycleAvailableActionsButtons;
+		}
+		 
+		
+		
+	}
+	
+	
+	
+	
     var listPartial = 'list-assets';
 //Determine what view to show
     switch (data.op) {
