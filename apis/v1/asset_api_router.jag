@@ -212,6 +212,8 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 		log.info('obtained idField');
 
 		var asset=model.export('asset.exporter');
+		var assetCachingModule=require('/modules/cache/cache.manager.js').assetCachingModule();
+		var assetCacheManager=new assetCachingModule.AssetCacheManager(session);
         assetCacheManager.add(asset,shortName);
 
         if (idField) {
