@@ -10,9 +10,6 @@ var render=function(theme,data,meta,require){
 	switch(data.op){
 	case 'create':
 		listPartial='add-asset';
-		if(data.data.meta.shortName=='mobileapp'){
-			listPartial='add-mobileapp';
-		}
 		break;
 	case 'view':
 		listPartial='view-asset';
