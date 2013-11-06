@@ -106,9 +106,12 @@ $(document).ready(function(){
             // bind 'myForm' and provide a simple callback function 
             $('#form-asset-create').ajaxForm(function(data) { 
             	
-            	//alert(data);
-             
-               	var data = JSON.parse(data);
+            	try{
+            		data = JSON.parse(data);
+            	}catch(e){
+            		window.location.replace("/publisher/assets/mobileapp/");
+               		return;
+            	}
                
                	if(data.ok == false){
                		
@@ -133,8 +136,6 @@ $(document).ready(function(){
 				 	 });
                		
                		
-               	}else{
-               		window.location.replace("/publisher/assets/mobileapp/");
                	}
                
 				
