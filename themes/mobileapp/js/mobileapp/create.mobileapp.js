@@ -105,12 +105,40 @@ $(document).ready(function(){
 	    $(document).ready(function() { 
             // bind 'myForm' and provide a simple callback function 
             $('#form-asset-create').ajaxForm(function(data) { 
-               //	var data = JSON.parse(data);
-               //	if(data.ok){
+            	
+            	//alert(data);
+             
+               	var data = JSON.parse(data);
+               
+               	if(data.ok == false){
                		
-               //	}
-              
-               window.location.replace("/publisher/assets/mobileapp/");
+               		var validationErrors = "";
+               		
+               		for (var key in data.report) {
+					  if (data.report.hasOwnProperty(key)) {					   
+					    if(key != "failed"){
+					    	validationErrors += data.report[key] + "<br>";
+					    }
+					    
+					  }
+					}
+               		
+               		 noty({               		 	
+					    text: '<strong>Validation Failed!</strong> <br />' + validationErrors,
+					    template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+					    layout: "center",
+					    timeout: 2000,
+					    type: "error"
+				   
+				 	 });
+               		
+               		
+               	}else{
+               		window.location.replace("/publisher/assets/mobileapp/");
+               	}
+               
+				
+             
             }); 
         });
 	
