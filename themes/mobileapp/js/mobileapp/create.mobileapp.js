@@ -22,13 +22,17 @@ $('#txtOS').on("change",function() {
 	  
 	  
 	   if($('#txtOS').val() == 'android'){
+	   		$('#txtNameLabel').text('Package Name');
 		   	if($('#txtMarket').val() == "VPP"){
 		   		$('#txtMarket').val('Market');
+		   		
+		   		
 		   	}
 	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .APK FILE');
 	   		$('#txtMarket').children('option[value="VPP"]').css('display','none');
 	   		
 	   }else if($('#txtOS').val() == 'ios'){
+	   		$('#txtNameLabel').text('App Identifier');
 	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .IPL FILE');
 	   		$('#txtMarket').children('option[value="VPP"]').css('display','block');   		
 	   }
