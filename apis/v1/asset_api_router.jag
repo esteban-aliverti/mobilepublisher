@@ -177,7 +177,8 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			model.set('overview.packagename',meta.package);
 			model.set('overview.url', meta.path);
 			model.set('overview.name',ctx.name);
-			model.set('overview.platform',ctx.platform );
+            model.set('overview.category',ctx.platform);
+			model.set('overview.platform',ctx.platform);
 			model.set('overview.version',ctx.version);
 			model.set('overview.provider', username);
 			model.set('overview.description',ctx.description);
