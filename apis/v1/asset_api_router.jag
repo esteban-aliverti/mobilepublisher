@@ -218,6 +218,9 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 
         if (idField) {
             print({ok: 'true', message: 'Asset created.', id: idField.value});
+			if(shortName =="mobileapp"){
+				response.sendRedirect("/publisher/assets/mobileapp/");
+			}
         }
         else {
             log.debug('An asset of type: ' + shortName + ' could not be created.Probably a fault with publisher logic!');
