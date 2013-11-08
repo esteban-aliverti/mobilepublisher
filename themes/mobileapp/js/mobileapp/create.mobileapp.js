@@ -194,7 +194,7 @@ jQuery("#form-asset-create").submit(function() {
 	$("#txtMarketHidden").val($("#txtMarket").val());
 	$("#txtOSHidden").val($("#txtOS").val());
 	
-	if($("#txtMarketHidden").val() == 'Market'){
+	if($("#txtMarketHidden").val() == 'Market' || ("#txtMarketHidden").val() == 'VPP' ){
 		$('#appmeta').val(JSON.stringify({package: $("#txtPackagename").val(), version: $("#txtVersion").val()}));
 	}
 	
