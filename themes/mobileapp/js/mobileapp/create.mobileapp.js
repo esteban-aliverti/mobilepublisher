@@ -22,10 +22,15 @@ $('#txtOS').on("change",function() {
 	  
 	  
 	   if($('#txtOS').val() == 'android'){
+		   	if($('#txtMarket').val() == "VPP"){
+		   		$('#txtMarket').val('Market');
+		   	}
 	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .APK FILE');
+	   		$('#txtMarket').children('option[value="VPP"]').css('display','none');
 	   		
 	   }else if($('#txtOS').val() == 'ios'){
-	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .IPL FILE');	   		
+	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .IPL FILE');
+	   		$('#txtMarket').children('option[value="VPP"]').css('display','block');   		
 	   }
 	  
 	  
@@ -33,7 +38,7 @@ $('#txtOS').on("change",function() {
 
 
 $('#txtMarket').on("change",function() {
-	  if($('#txtMarket').val() == 'Market'){
+	  if($('#txtMarket').val() == 'Market' || $('#txtMarket').val() == 'VPP'){
 		  $('#file-upload-block').css('display', 'none');
 		  $('#package-select-block').css('display', 'block');
 	  }else{
