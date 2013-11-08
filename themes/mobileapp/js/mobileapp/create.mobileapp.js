@@ -145,6 +145,8 @@ $(document).ready(function(){
 				 	 });
                		
                		
+               	}else{
+               		window.location.replace("/publisher/assets/mobileapp/");
                	}
                
 				
