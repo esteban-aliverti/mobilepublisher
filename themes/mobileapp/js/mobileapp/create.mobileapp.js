@@ -162,6 +162,7 @@ $(document).ready(function(){
 		                    //data.context = $('<p/>').text('Uploading...').replaceAll($(this));
 		                    $("#modal-upload-data").css("display", "none");
 		                     $("#modal-upload-progress").css("display", "block");
+		                    data.platform = $('#txtOS').val();		                   
 		                    data.submit();		                    
 		                });
 		        },
