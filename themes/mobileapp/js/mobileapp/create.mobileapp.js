@@ -194,7 +194,11 @@ jQuery("#form-asset-create").submit(function() {
 	$("#txtMarketHidden").val($("#txtMarket").val());
 	$("#txtOSHidden").val($("#txtOS").val());
 	
-	if($("#txtMarketHidden").val() == 'Market' || ("#txtMarketHidden").val() == 'VPP' ){
+	if($("#txtMarketHidden").val() == 'VPP'){
+		$('#appmeta').val(JSON.stringify({package: $("#txtPackagename").val(), version: $("#txtVersion").val()}));
+	}
+	
+	if($("#txtMarketHidden").val() == 'Market'){
 		$('#appmeta').val(JSON.stringify({package: $("#txtPackagename").val(), version: $("#txtVersion").val()}));
 	}
 	
