@@ -57,6 +57,18 @@ var saveFile = function(file){
 	}
 	return "";
 }
+//284882215
+var getBundleID = function(appid){
+    var result =  get('https://itunes.apple.com/lookup?id='+appid).data;
+    if(result!=null){
+        result = parse(result);
+        if(result.resultCount==1){
+            var appinfo =  result.results[0];
+            var bundleId = appinfo.bundleId;
+            return bundleId;
+        }
+    }
+}
 
 
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
@@ -174,8 +186,13 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			}
 			meta = parse(unescape(meta));
 			model.set('overview.bundleversion',meta.version);
-			model.set('overview.packagename',meta.package);
+			model.set('overview.packagename', meta.package);
+            if(ctx.markettype!='Enterprise' && ctx.platform.toUpperCase()=="IOS"){
+                model.set('overview.packagename', getBundleID(meta.package));
+                model.set('overview.appid', meta.package);
+            } 
 			model.set('overview.url', meta.path);
+            model.set('overview_version', meta.version);
 			model.set('overview.name',ctx.name);
             model.set('overview.category',ctx.platform);
 			model.set('overview.platform',ctx.platform);
