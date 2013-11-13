@@ -59,16 +59,20 @@ var saveFile = function(file){
 }
 //284882215
 var getBundleID = function(appid){
-    var result =  get('https://itunes.apple.com/lookup?id='+appid).data;
-    if(result!=null){
-        result = parse(result);
-        if(result.resultCount==1){
-            var appinfo =  result.results[0];
-            var bundleId = appinfo.bundleId;
-            return bundleId;
+    try{
+        var result =  get('https://itunes.apple.com/lookup?id='+appid).data;
+        if(result!=null){
+            log.info(result);
+            result = parse(result);
+            if(result.resultCount==1){
+                var appinfo =  result.results[0];
+                var bundleId = appinfo.bundleId;
+                return bundleId;
+            }
         }
+    }catch(e){
+        return null;
     }
-    return null;
 }
 
 
@@ -191,7 +195,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
             if(ctx.markettype!='Enterprise' && ctx.platform.toUpperCase()=="IOS"){
                 var bundleId = getBundleID(meta.package);
                 if(bundleId==null){
-                    print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["Duplicate name found for app"]]}})
+                    print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["App ID is invalid"]}})
                     return;
                 }else{
                     model.set('overview.packagename', bundleId);
