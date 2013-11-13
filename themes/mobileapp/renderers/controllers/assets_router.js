@@ -6,7 +6,7 @@
 
 var render = function (theme, data, meta, require) {
 	
-	
+	data.isNotReviwer = true;
 	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Approve": "btn-blue", "Reject": "btn-danger"};
 	
 	if(data.artifacts){
@@ -39,6 +39,7 @@ var render = function (theme, data, meta, require) {
 				}
 				
 				if(data.roles[k] == "Internal/reviewer"){
+					data.isNotReviwer = false;
 					if(name == "Approve"){
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
 					}
