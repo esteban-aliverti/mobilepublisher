@@ -7,7 +7,7 @@
 var render = function (theme, data, meta, require) {
 	
 	data.isNotReviwer = true;
-	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Approve": "btn-blue", "Reject": "btn-danger"};
+	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Retire": "btn-danger", "Approve": "btn-blue", "Reject": "btn-danger"};
 	
 	if(data.artifacts){
 		
@@ -34,6 +34,12 @@ var render = function (theme, data, meta, require) {
 					if(name == "Unpublish"){
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
 					}
+					if(name == "Depreicate"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Retire"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
 					
 					continue;
 				}
@@ -56,6 +62,12 @@ var render = function (theme, data, meta, require) {
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
 					}
 					if(name == "Unpublish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Depreicate"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Retire"){
 						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
 					}
 				}
