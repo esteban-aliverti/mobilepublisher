@@ -7,7 +7,6 @@
 var render = function (theme, data, meta, require) {
 	
 	
-	
 	var lifecycleColors = {"Demote": "btn-blue", "Submit": "btn-blue", "Publish": "btn-blue", "Unpublish": "btn-blue", "Deprecate": "btn-danger", "Approve": "btn-blue", "Reject": "btn-danger"};
 	
 	if(data.artifacts){
@@ -15,8 +14,56 @@ var render = function (theme, data, meta, require) {
 		for(var i = 0; i < data.artifacts.length; i++){	
 		var lifecycleAvailableActionsButtons = new Array();
 		for(var j = 0; j < data.artifacts[i].lifecycleAvailableActions.length; j++){	
-			var name = data.artifacts[i].lifecycleAvailableActions[j];		
-			lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});			
+			var name = data.artifacts[i].lifecycleAvailableActions[j];
+			
+			for(var k = 0; k < data.roles.length; k++){
+			//	print(data.roles[k]);
+				if(data.roles[k] == "admin"){
+					if(name == "Approve"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Reject"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Publish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Submit"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Unpublish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					
+					continue;
+				}
+				
+				if(data.roles[k] == "Internal/reviewer"){
+					if(name == "Approve"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Reject"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+				}
+				
+				if(data.roles[k] == "Internal/publisher"){					
+					if(name == "Publish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Submit"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+					if(name == "Unpublish"){
+						lifecycleAvailableActionsButtons.push({name: name, style: lifecycleColors[name]});
+					}
+				}
+				
+				
+				
+			}
+					
+						
 		}
 		
 		data.artifacts[i].lifecycleAvailableActions = lifecycleAvailableActionsButtons;
@@ -27,14 +74,13 @@ var render = function (theme, data, meta, require) {
 	}
 	
 	
-	
-	
+	//print(data);
+
     var listPartial = 'list-assets';
 //Determine what view to show
     switch (data.op) {
         case 'list':
             listPartial = 'list-assets';
-            data = require('/helpers/view-asset.js').format(data);
             break;
         case 'statistics':
             listPartial = 'statistics';
