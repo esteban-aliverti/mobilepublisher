@@ -190,6 +190,7 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 				return;
 			}
 			meta = parse(unescape(meta));
+            log.info(meta);
 			model.set('overview.bundleversion',meta.version);
 			model.set('overview.packagename', meta.package);
             if(ctx.markettype!='Enterprise' && ctx.platform.toUpperCase()=="IOS"){
@@ -202,7 +203,12 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
                     model.set('overview.appid', meta.package);
                 }
             } 
-			model.set('overview.url', meta.path);
+            if(!meta.weburl){
+                model.set('overview.url', meta.path);
+            }else{
+                model.set('overview.url', meta.weburl);
+            }
+			
             model.set('overview_version', meta.version);
 			model.set('overview.name',ctx.name);
             model.set('overview.category',ctx.platform);
