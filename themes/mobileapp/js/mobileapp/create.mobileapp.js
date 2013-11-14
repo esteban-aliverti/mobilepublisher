@@ -205,5 +205,8 @@ jQuery("#form-asset-create").submit(function() {
 		$('#appmeta').val(JSON.stringify({package: $("#txtPackagename").val(), version: $("#txtVersion").val()}));
 	}
 	
-   
+	if($("#txtWebapp").val() != ''){
+		$('#appmeta').val(JSON.stringify({weburl: $("#txtWebapp").val()}));
+	}
+   //alert($('#appmeta').val());
 });
