@@ -21,10 +21,10 @@ var render=function(theme,data,meta,require){
 		break;
     case 'edit':
         listPartial='edit-asset';
-       // if(data.data.meta.shortName=='mobileapp'){
+        if(data.data.meta.shortName=='mobileapp'){
 			//log.info('Special rendering case for mobileapp-using add-mobilepp.hbs');
-		//	listPartial='edit-mobileapp';
-		//}
+			listPartial='edit-mobileapp';
+		}
         data = require('/helpers/edit-asset.js').selectCategory(data);
         break;
     case 'lifecycle':
