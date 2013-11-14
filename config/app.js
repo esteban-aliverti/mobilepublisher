@@ -42,8 +42,9 @@ mod.user.init(pubConfig);
 var publisher = require('/modules/publisher.js');
 publisher.init(pubConfig);
 
-
-
+var mamconfig = require('/config/mam-config.json');
+var folder =  new File(mamconfig.filePreciseLocation);
+folder.mkdir();
 
 //var SUPER_TENANT_ID=-1234;
 //var event = require('/modules/event.js');
