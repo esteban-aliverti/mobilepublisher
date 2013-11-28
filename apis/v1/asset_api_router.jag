@@ -20,7 +20,7 @@ var caramel = require('caramel');
 var server = require('store').server;
 var router = require('/modules/router-g.js').router();
 var routeManager = new router.Router();
-
+var utility=require('/modules/utility.js').rxt_utility();
 
 var makeid= function()
 {
@@ -75,6 +75,27 @@ var getBundleID = function(appid){
     }
 }
 
+var validateAppIdentifier = function(type,appid){
+    var artifactManager = rxtManager.getArtifactManager('mobileapp');
+
+    var predicate={}
+    predicate['attributes']={};
+
+    predicate['attributes']['overview_'+type]=appid;
+
+    //Perform a search for an asset with the provided name
+    var matches=artifactManager.find(function(asset){
+        log.info(asset);
+        log.info(predicate);
+        var equal=utility.assertEqualCaseSensitive(asset,predicate);
+        return equal;
+    },null);
+
+    if(matches.length>0){  
+        print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["App with identifer "+appid+" already exists"]}})
+        return true;
+    }
+}
 
 routeManager.register('GET', 'publisher', '/publisher/api/asset/{type}', function (context) {
 
@@ -182,6 +203,12 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			screenshot3 = saveFile(screenshot3);
 
 			var screenshots = screenshot1+","+screenshot2+","+screenshot3;
+            log.info(screenshots);
+
+            if(screenshots==",,"){
+                print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["Screenshots not added"]}})
+                return;
+            }
 			var meta = ctx['appmeta'];
 			log.info(stringify(meta));
 			if(meta == undefined || meta==""){
@@ -199,13 +226,23 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
                     print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["App ID is invalid"]}})
                     return;
                 }else{
+                    if(validateAppIdentifier("appid", meta.package)){
+                        return;
+                    }
                     model.set('overview.packagename', bundleId);
                     model.set('overview.appid', meta.package);
+                }
+            }else{
+                if(validateAppIdentifier("packagename", meta.package)){
+                        return;
                 }
             } 
             if(!meta.weburl){
                 model.set('overview.url', meta.path);
             }else{
+                if(validateAppIdentifier("url", meta.weburl)){
+                        return;
+                }
                 model.set('overview.url', meta.weburl);
             }
 			

@@ -78,7 +78,7 @@ routeMnger.register('GET', 'publisher', '/publisher/assets/{type}/', function(co
 
         //Perform some filtering logic on the artifacts
         artifacts=filterManager.filter(artifacts,session);
-        log.info(artifacts);
+        // log.info(artifacts);
 
 		caramel.render({
 			op : 'list',
