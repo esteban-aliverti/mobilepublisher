@@ -190,7 +190,7 @@ $('#btn-app-upload').click(function () {
 });
 
 
-jQuery("#form-asset-create").submit(function() {
+jQuery("#form-asset-create").submit(function(e) {
 	
 	$("#txtMarketHidden").val($("#txtMarket").val());
 	$("#txtOSHidden").val($("#txtOS").val());
@@ -205,6 +205,12 @@ jQuery("#form-asset-create").submit(function() {
 	
 	if($("#txtWebapp").val() != ''){
 		$('#appmeta').val(JSON.stringify({weburl: $("#txtWebapp").val()}));
+	}
+	
+	if($('#appmeta').val() == null || $('#appmeta').val() == ""){
+		 $("#modal-upload-app").modal('show');
+		 $("#modal-upload-data").css("display", "block");
+		e.preventDefault();
 	}
    //alert($('#appmeta').val());
 });
