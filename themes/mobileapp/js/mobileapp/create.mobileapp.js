@@ -31,7 +31,7 @@ $('#txtOS').on("change",function() {
 	   		
 	   }else if($('#txtOS').val() == 'ios'){
 	   		$('#txtNameLabel').text('App Identifier');
-	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .IPL FILE');
+	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .IPA FILE');
 	   		$('#txtMarket').children('option[value="VPP"]').css('display','block');   		
 	   }
 	  
