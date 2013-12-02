@@ -25,8 +25,6 @@ $('#txtOS').on("change",function() {
 	   		$('#txtNameLabel').text('Package Name');
 		   	if($('#txtMarket').val() == "VPP"){
 		   		$('#txtMarket').val('Market');
-		   		
-		   		
 		   	}
 	   		$('#file-upload-text').html('<i class="icon-plus-sign"></i> SELECT .APK FILE');
 	   		$('#txtMarket').children('option[value="VPP"]').css('display','none');
