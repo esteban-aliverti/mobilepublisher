@@ -1,7 +1,7 @@
 {
     "assets":{
 
-        "ignore":[],
+        "ignore":["gadget", "site", "ebook" ],
         "icons":{
             "gadget":"icon-cog",
             "ebook" :"icon-ebook",
