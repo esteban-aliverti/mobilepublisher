@@ -72,15 +72,15 @@
                         	{{/compare}}
                         	{{#compare this.lifecycleState "In-Review"}}
                         		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
-                        	{{/compare}}
-                        	{{#compare this.lifecycleState "Rejected"}}
-                        		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
-                        	{{/compare}}
+                        	{{/compare}}                        	
                         	{{#compare this.lifecycleState "Unpublished"}}
                         		<span class="lifecycle-state"><small><i class="icon-circle text-yellow"></i> {{this.lifecycleState}}</small></span>
                         	{{/compare}}
                         	{{#compare this.lifecycleState "Approved"}}
                         		<span class="lifecycle-state"><small><i class="icon-circle text-green"></i> {{this.lifecycleState}}</small></span>
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "Rejected"}}
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-red"></i> {{this.lifecycleState}}</small></span>
                         	{{/compare}}	
                         	
                         </td>
