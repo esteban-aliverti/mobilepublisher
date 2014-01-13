@@ -2,7 +2,7 @@ var resources = function(page, meta) {
 	var log = new Log('edit-asset');
 	log.debug('resource called');
 	return {
-		js : ['edit.asset.js', '/logic/asset.tag.edit.js', 'bootstrap-select.min.js','options.text.js'],
+		js : ['/mobileapp/edit.mobileapp.js', '/logic/asset.tag.edit.js', 'bootstrap-select.min.js','options.text.js'],
 		css : ['bootstrap-select.min.css']
 	};
 
@@ -31,4 +31,11 @@ var selectCategories = function(fields) {
 			return fields[i].valueList;
 		}
 	}
+}
+
+var screenshots = function(data) {
+	var screens = data.artifact.attributes.images_screenshots;
+	var shots = screens.split(",");
+	data.artifact.attributes.images_screenshots = shots; 
+	return data;
 }
