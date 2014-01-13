@@ -56,6 +56,56 @@ $('#txtMarket').on("change",function() {
 });
 
 
+	 
+	    $(document).ready(function() { 
+	    	
+            // bind 'myForm' and provide a simple callback function 
+            $('#form-asset-create').ajaxForm(function(data) { 
+            
+            	try{
+            		data = JSON.parse(data);
+            	}catch(e){
+            		window.location.replace("/publisher/assets/mobileapp/");
+               		return;
+            	}
+               
+               	if(data.ok == false){
+               		
+               		var validationErrors = "";
+               		
+               		for (var key in data.report) {
+					  if (data.report.hasOwnProperty(key)) {					   
+					    if(key != "failed"){
+					    	validationErrors += data.report[key] + "<br>";
+					    }
+					    
+					  }
+					}
+               		
+               		 noty({               		 	
+					    text: '<strong>Validation Failed!</strong> <br />' + validationErrors,
+					    template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+					    layout: "center",
+					    timeout: 2000,
+					    type: "error"
+				   
+				 	 });
+               		
+               		
+               	}else{
+               		window.location.replace("/publisher/assets/mobileapp/");
+               	}
+               
+				
+             
+            }); 
+        });
+	
+
+
+
+
+
 $('#btn-create-asset-mobile').click(function(e) {
 	
 	var name = $("#txtName").val();
@@ -105,81 +155,7 @@ $('#modal-upload-app').on('shown', function() {
 
 
 
-$(document).ready(function(){
-	// $("#app-upload-progress").css("display", "block");
-	 //$("#app-upload-progress-done").css("display", "none");
-	 
-	    $(document).ready(function() { 
-            // bind 'myForm' and provide a simple callback function 
-            $('#form-asset-create').ajaxForm(function(data) { 
-            	
-            	try{
-            		data = JSON.parse(data);
-            	}catch(e){
-            		window.location.replace("/publisher/assets/mobileapp/");
-               		return;
-            	}
-               
-               	if(data.ok == false){
-               		
-               		var validationErrors = "";
-               		
-               		for (var key in data.report) {
-					  if (data.report.hasOwnProperty(key)) {					   
-					    if(key != "failed"){
-					    	validationErrors += data.report[key] + "<br>";
-					    }
-					    
-					  }
-					}
-               		
-               		 noty({               		 	
-					    text: '<strong>Validation Failed!</strong> <br />' + validationErrors,
-					    template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
-					    layout: "center",
-					    timeout: 2000,
-					    type: "error"
-				   
-				 	 });
-               		
-               		
-               	}else{
-               		window.location.replace("/publisher/assets/mobileapp/");
-               	}
-               
-				
-             
-            }); 
-        });
-	
 
-	$('#txtAppUpload').fileuploadFile({
-        dataType: 'json',
-       	add: function (e, data) {
-		           $('#btn-app-upload').click(function () {
-		                    //data.context = $('<p/>').text('Uploading...').replaceAll($(this));
-		                    $("#modal-upload-data").css("display", "none");
-		                     $("#modal-upload-progress").css("display", "block");
-		                    data.platform = $('#txtOS').val();		                   
-		                    data.submit();		                    
-		                });
-		        },
-		        done: function (e, data) {
-		        	appMetaData = data._response.result;
-					$('#appmeta').val(JSON.stringify(data._response.result));
-					$("#app-upload-progress-done").css("display", "block");
-					$('#modal-upload-app').modal('hide');
-		        	//$('#txtWebapp').val(data._response.result[0]);
-		            //alert();
-		            //$("#app-upload-progress").css("display", "none");
-		            //$("#app-upload-progress-done").css("display", "block");
-		        }
-
-	});
-
-	$("#modal-upload-app").modal('show');
-
-});
 
 $('#btn-app-upload').click(function () {
 		          if(appMetaData == null){
@@ -191,26 +167,6 @@ $('#btn-app-upload').click(function () {
 
 
 jQuery("#form-asset-create").submit(function(e) {
-	
-	$("#txtMarketHidden").val($("#txtMarket").val());
-	$("#txtOSHidden").val($("#txtOS").val());
-	
-	if($("#txtMarketHidden").val() == 'VPP'){
-		$('#appmeta').val(JSON.stringify({package: $("#txtPackagename").val(), version: $("#txtVersion").val()}));
-	}
-	
-	if($("#txtMarketHidden").val() == 'Market'){
-		$('#appmeta').val(JSON.stringify({package: $("#txtPackagename").val(), version: $("#txtVersion").val()}));
-	}
-	
-	if($("#txtWebapp").val() != ''){
-		$('#appmeta').val(JSON.stringify({weburl: $("#txtWebapp").val()}));
-	}
-	
-	if($('#appmeta').val() == null || $('#appmeta').val() == ""){
-		 $("#modal-upload-app").modal('show');
-		 $("#modal-upload-data").css("display", "block");
-		e.preventDefault();
-	}
+	//e.preventDefault();
    //alert($('#appmeta').val());
 });

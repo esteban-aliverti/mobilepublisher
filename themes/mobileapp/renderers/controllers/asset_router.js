@@ -20,7 +20,7 @@ var render=function(theme,data,meta,require){
 		listPartial='view-asset';
 		break;
     case 'edit':
-        //listPartial='edit-asset';
+        listPartial='edit-asset';
         if(data.data.meta.shortName=='mobileapp'){
 			//log.info('Special rendering case for mobileapp-using edit-mobilepp.hbs');
 			listPartial='edit-mobileapp';
