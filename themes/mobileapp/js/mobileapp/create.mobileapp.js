@@ -185,7 +185,7 @@ $(document).ready(function(){
 				   
 					 	});
 	               	}else{
-	               		$('#appmeta').val(JSON.stringify(data._response.result));
+	               		$('#appmeta').val(JSON.stringify(data));
 						$("#app-upload-progress-done").css("display", "block");
 						$('#modal-upload-app').modal('hide');
 	               	}
