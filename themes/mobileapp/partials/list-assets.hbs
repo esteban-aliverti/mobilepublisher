@@ -82,8 +82,10 @@
                         	{{/compare}}
                         	{{#compare this.lifecycleState "Rejected"}}
                         		<span class="lifecycle-state"><small><i class="icon-circle text-red"></i> {{this.lifecycleState}}</small></span>
-                        	{{/compare}}	
-                        	
+                        	{{/compare}}
+                        	{{#compare this.lifecycleState "Retired"}}	
+                        		<span class="lifecycle-state"><small><i class="icon-circle text-red"></i> {{this.lifecycleState}}</small></span>
+                       		{{/compare}}
                         </td>
                         
                          <td>
