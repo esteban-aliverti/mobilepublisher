@@ -22,6 +22,17 @@ var router = require('/modules/router-g.js').router();
 var routeManager = new router.Router();
 var utility=require('/modules/utility.js').rxt_utility();
 
+var checkNonSpecial = function(value){
+    var non_special_regex = /^[A-Za-z][A-Za-z0-9]*$/;
+    return non_special_regex.test(value);
+}
+var checkURL = function(value) {
+    var urlregex = new RegExp("/^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/");
+    if (urlregex.test(value)) {
+        return (true);
+    }
+    return (false);
+}
 var makeid= function()
 {
     var text = "";
@@ -231,23 +242,30 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
                     model.set('overview.packagename', bundleId);
                     model.set('overview.appid', meta.package);
                 }
-            }else{
-
+            }else if(ctx.platform.toUpperCase()=="ANDROID"){
                 if(validateAppIdentifier({"overview_packagename": meta.package, "overview_version":meta.version}, meta.package)){
                         return;
                 }
             } 
             if(!meta.weburl){
-                
                 model.set('overview.url', meta.path);
             }else{
-                if(validateAppIdentifier({"overview_url": meta.weburl, "overview_version":meta.version},meta.weburl)){
+
+                if(checkURL(meta.weburl)){
+                    if(validateAppIdentifier({"overview_url": meta.weburl, "overview_version":meta.version},meta.weburl)){
                         return;
                 }
                 model.set('overview.url', meta.weburl);
+                }else{
+                    print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["Invalid weburl"]}})
+                    return;
+                }
             }
-			
             model.set('overview.version', meta.version);
+            if(!checkNonSpecial(ctx.name)){
+                print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["Special characters found in name"]}})
+                return;
+            }
 			model.set('overview.name',ctx.name);
             model.set('overview.category',ctx.platform);
 			model.set('overview.platform',ctx.platform);
