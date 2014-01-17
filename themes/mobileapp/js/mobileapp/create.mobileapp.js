@@ -167,6 +167,8 @@ $(document).ready(function(){
 		        },
 		        done: function (e, data) {
 		        	var data = data._response.result;
+		        	$('#txtVersion').val(data.version);
+		        	
 		        	if(data.ok == false){
                			var validationErrors = "";
 	               		for (var key in data.report) {
