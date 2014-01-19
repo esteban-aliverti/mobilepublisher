@@ -272,8 +272,10 @@ jQuery("#form-asset-create").submit(function(e) {
 	   
 	}
 	
+	
 	if($("#txtOS").val() == 'webapp'){
 		 $('#txtMarket').val("Web App");
+		 $("#txtMarketHidden").val("Web App");
 	}
 	
 	if($('#appmeta').val() == null || $('#appmeta').val() == ""){
