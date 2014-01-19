@@ -74,7 +74,7 @@
 						<div>
 							<span class="btn btn-file"><span class="fileupload-new"><i class="icon-plus-sign"></i></span><span class="fileupload-exists"><i class="icon-edit"></i></span>
 								<input type="file" id="txtBanner" name="bannerFile" value="{{artifact.attributes.images_banner}}">
-							</span><a data-dismiss="fileupload" class="btn fileupload-exists" href="#"><i class="icon-remove"></i></a>
+							</span>
 						</div>
 					</div>
 					
@@ -92,32 +92,39 @@
 					Shots  <span style="color:#FF0000">*</span><br><small>(288px * 512px, .png)</small></label>
 				<div class="controls">
 
+					{{#if artifact.attributes.images_screenshots.[0]}}
 					<div data-provides="fileupload" class="fileupload fileupload-exists"><input type="hidden" value="" name="">
 						<div class="fileupload-preview thumbnail" style="line-height: 240px;"><img src="{{artifact.attributes.images_screenshots.[0]}}"></div>
 						<div>
 							<span class="btn btn-file"><span class="fileupload-new"><i class="icon-plus-sign"></i></span><span class="fileupload-exists"><i class="icon-edit"></i></span>
 								<input type="file" data-url="/publisher/api/apps/upload" id="txtScreenShot1" name="screenshot1File" class="uploadAction">
-							</span><a data-dismiss="fileupload" class="btn fileupload-exists" href="#"><i class="icon-remove"></i></a>
+							</span>
 						</div>
 					</div>
-
+					{{/if}}
+					
+					
+					{{#if artifact.attributes.images_screenshots.[1]}}
 					<div data-provides="fileupload" class="fileupload fileupload-exists"><input type="hidden" value="" name="">
 						<div class="fileupload-preview thumbnail" style="line-height: 240px;"><img src="{{artifact.attributes.images_screenshots.[1]}}"></div>
 					<div>
 							<span class="btn btn-file"><span class="fileupload-new"><i class="icon-plus-sign"></i></span><span class="fileupload-exists"><i class="icon-edit"></i></span>
 								<input type="file" data-url="/publisher/api/apps/upload" id="txtScreenShot2" name="screenshot2File" class="uploadAction">
-							</span><a data-dismiss="fileupload" class="btn fileupload-exists" href="#"><i class="icon-remove"></i></a>
+							</span>
 						</div>
 					</div>
+					{{/if}}
 
+					{{#if artifact.attributes.images_screenshots.[2]}}
 					<div data-provides="fileupload" class="fileupload fileupload-exists"><input type="hidden" value="" name="">
 						<div class="fileupload-preview thumbnail" style="line-height: 240px;"><img src="{{artifact.attributes.images_screenshots.[2]}}"></div>
 					<div>
 							<span class="btn btn-file"><span class="fileupload-new"><i class="icon-plus-sign"></i></span><span class="fileupload-exists"><i class="icon-edit"></i></span>
 								<input type="file" data-url="/publisher/api/apps/upload" id="txtScreenShot3" name="screenshot3File" class="uploadAction">
-							</span><a data-dismiss="fileupload" class="btn fileupload-exists" href="#"><i class="icon-remove"></i></a>
+							</span>
 						</div>
 					</div>
+					{{/if}}
 
 				</div>
 			</div>
@@ -131,7 +138,7 @@
 					<div>
 							<span class="btn btn-file"><span class="fileupload-new"><i class="icon-plus-sign"></i></span><span class="fileupload-exists"><i class="icon-edit"></i></span>
 								<input type="file" name="iconFile">
-							</span><a data-dismiss="fileupload" class="btn fileupload-exists" href="#"><i class="icon-remove"></i></a>
+							</span>
 						</div>
 					</div>
 				</div>
