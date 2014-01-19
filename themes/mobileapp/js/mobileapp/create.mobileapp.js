@@ -269,6 +269,7 @@ jQuery("#form-asset-create").submit(function(e) {
 	
 	if($("#txtWebapp").val() != ''){
 		$('#appmeta').val(JSON.stringify({weburl: $("#txtWebapp").val()}));
+	    $('#txtMarket').val("Web App");
 	}
 	
 	if($('#appmeta').val() == null || $('#appmeta').val() == ""){
