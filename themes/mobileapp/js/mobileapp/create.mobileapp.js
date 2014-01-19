@@ -103,6 +103,12 @@ $('#modal-upload-app').on('shown', function() {
         $(".dropdownimage").msDropDown();
 });
 
+$('#upload-app-again').click(function(e) {
+       
+         $("#modal-upload-data").css("display", "block");
+		  $("#modal-upload-progress").css("display", "none");
+});
+
 
 
 $(document).ready(function(){
