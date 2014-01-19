@@ -246,8 +246,8 @@ $('#btn-app-upload').click(function () {
 		              $('#modal-upload-app').modal('hide');
 		          }	
 		          
-		        
-				   if($('#txtMarket').val() == 'Enterprise'){
+		       
+				   if($('#txtMarket').val() == 'Enterprise' && $("#txtOS").val() != 'webapp' ){
 				   	$("#txtVersion").attr("disabled", "disabled");
 				   }	                  
 		                                      
