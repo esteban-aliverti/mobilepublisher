@@ -119,6 +119,8 @@ $(document).ready(function(){
             		window.location.replace("/publisher/assets/mobileapp/");
                		return;
             	}
+            	
+            	
                
                	if(data.ok == false){
                		
@@ -169,6 +171,8 @@ $(document).ready(function(){
 		        	var data = data._response.result;
 		        	$('#txtVersion').val(data.version);
 		        	
+		        	
+		        	
 		        	if(data.ok == false){
                			var validationErrors = "";
 	               		for (var key in data.report) {
@@ -183,7 +187,7 @@ $(document).ready(function(){
 	               		
 	               		
 					 	//window.location.replace("/publisher/assets/mobileapp/");
-					 	
+				
 					 	
 				noty({
 					 		text: '<strong>Validation Failed!</strong> <br />' + validationErrors,
@@ -234,7 +238,12 @@ $('#btn-app-upload').click(function () {
 		          if(appMetaData == null){
 		          	  $("#modal-upload-data").css("display", "none");
 		              $('#modal-upload-app').modal('hide');
-		          }		                  
+		          }	
+		          
+		        
+				   if($('#txtMarket').val() == 'Enterprise'){
+				   	$("#txtVersion").attr("disabled", "disabled");
+				   }	                  
 		                                      
 });
 
