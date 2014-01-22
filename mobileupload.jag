@@ -78,7 +78,6 @@
 					mergeRecursive(meta,information);
 				}
 			}catch(e){
-				log.info(e);
 				log.debug("Uploaded file is corrupted");
 				print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["Uploaded file is corrupted"]}})
 			}
