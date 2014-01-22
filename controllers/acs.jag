@@ -53,11 +53,11 @@
                         var user_roles = um.getRoleListOfUser(tenantUser.username);
                         var login_flag = false;
                         for(var i = 0; i<user_roles.length; i++){
-                            if(user_roles[i]=="Internal/publisher"||user_roles[i]=="admin"){
+                            if(user_roles[i]=="Internal/publisher"||user_roles[i]=="Internal/reviewer"|| user_roles[i]=="admin"){
                                 if (user.loginWithSAML(sessionObj.loggedInUser)) {
                                     log.debug('user is set :::' + sessionObj.loggedInUser);
                                     response.sendRedirect('/publisher');
-                                    login=true;
+                                    login_flag=true;
                                 }
                             }
                         }
