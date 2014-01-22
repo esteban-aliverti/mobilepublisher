@@ -23,7 +23,7 @@ var routeManager = new router.Router();
 var utility=require('/modules/utility.js').rxt_utility();
 
 var checkNonSpecial = function(value){
-    var non_special_regex = /^[A-Za-z][A-Za-z0-9]*$/;
+    var non_special_regex = /^[A-Za-z][A-Za-z0-9\s-]*$/;
     return non_special_regex.test(value);
 }
 var checkURL = function(value) {
