@@ -44,6 +44,11 @@ var makeid= function()
 
     return text;
 }
+var getExtensionText = function(extension){
+    var index = extension.lastIndexOf('.');
+    var ext = index < extension.length ? extension.substring(index + 1) : '';
+    return ext;
+}
 var getExtension = function(file){
 	var path = file.getName();
 	var index = path.lastIndexOf('.');
@@ -234,6 +239,10 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
 			model.set('overview.bundleversion', version);
 			model.set('overview.packagename', meta.package);
             if(ctx.markettype!='Enterprise' && ctx.platform.toUpperCase()=="IOS"){
+                if(getExtensionText(meta.path)!="ipa"){
+                    print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["File uploaded is not supported by iOS"]}})
+                    return;
+                }
                 var bundleId = getBundleID(meta.package);
                 if(bundleId==null){
                     print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["App ID is invalid"]}})
@@ -246,6 +255,10 @@ routeManager.register('POST', 'publisher', '/publisher/api/asset/{type}', functi
                     model.set('overview.appid', meta.package);
                 }
             }else if(ctx.platform.toUpperCase()=="ANDROID"){
+                if(getExtensionText(meta.path)!="apk"){
+                    print({"ok" : false, "message" : "Validation failure", "report" : {"failed" : true, "name" : ["File uploaded is not supported by Android"]}})
+                    return;
+                }
                 if(validateAppIdentifier({"overview_packagename": meta.package, "overview_version":version}, meta.package)){
                         return;
                 }
