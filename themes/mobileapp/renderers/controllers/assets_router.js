@@ -8,7 +8,7 @@ var render = function (theme, data, meta, require) {
 	
 	data.isNotReviwer = true;
 	
-	for(var k = 0; k < data.roles.length; k++){
+   for(var k = 0; k < data.roles.length; k++){
 		if(data.roles[k] == "Internal/reviewer"){
 					data.isNotReviwer = false;
 		}
