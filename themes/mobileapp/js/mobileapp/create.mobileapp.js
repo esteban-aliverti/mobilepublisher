@@ -104,9 +104,10 @@ $('#modal-upload-app').on('shown', function() {
 });
 
 $('#upload-app-again').click(function(e) {
-       
+       location.reload(); 
          $("#modal-upload-data").css("display", "block");
 		  $("#modal-upload-progress").css("display", "none");
+		
 });
 
 
