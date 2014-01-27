@@ -94,7 +94,6 @@ $('#btn-create-asset-mobile').click(function(e) {
 
 $('#modal-upload-app').on('shown', function() {
         $(".dropdownimage").msDropDown();
-        location.reload(); 
 });
 
 
